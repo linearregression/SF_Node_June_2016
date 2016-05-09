@@ -1,0 +1,35 @@
+{
+  "name": "SF_Node_GooEve",
+  "version": "0.0.1",
+  "description": "Demonstrate importing Google Calendar Events into your web app.",
+  "keywords": [
+    "SF_Node_GooEve",
+    "SF",
+    "Node",
+    "Google",
+    "Event",
+    "SF Node"
+  ],
+  "homepage": "http://3waters.org/sf-node-june-2016/",
+  "license": "MIT",
+  "author": {
+    "name": "Tre' Grisby",
+    "email": "trewaters@hotmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Trewaters/SF_Node_June_2016.git"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "mongoose": "^4.4.15",
+    "morgan": "^1.7.0",
+    "passport": "^0.3.2"
+  },
+  "devDependencies": {
+    "lite-server": "^2.2.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
