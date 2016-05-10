@@ -21,10 +21,14 @@
     "url": "https://github.com/Trewaters/SF_Node_June_2016.git"
   },
   "dependencies": {
+    "acl": "^0.4.9",
+    "bcrypt": "^0.8.6",
     "express": "^4.13.4",
+    "moment": "^2.13.0",
     "mongoose": "^4.4.15",
     "morgan": "^1.7.0",
-    "passport": "^0.3.2"
+    "passport": "^0.3.2",
+    "xml2js": "^0.4.16"
   },
   "devDependencies": {
     "lite-server": "^2.2.0"
