@@ -46,6 +46,7 @@ app_express.post('/login',
 
 */
 
+// Local strategy
 // built in definitions for success and failure action
 app_express.post('login',
     passport.authenticate('local',
@@ -57,17 +58,18 @@ app_express.post('login',
     )
 ); // passport
 
+// Meetup Strategy
 var MeetupStrategy = require('passport-meetup-oauth2').Strategy;
 passport.use(new MeetupStrategy({
-    clientID: MEETUP_KEY,
-    clientSecret: MEETUP_SECRET,
+    clientID: config.meetup.KEY,
+    clientSecret: config.meetup.SECRET,
     callbackURL: 'http://localhost:3000/auth/meetup/callback'
 }, function (accessToken, refreshToken, profile, done) {
     // store credentials, etc
 })
 ); // passport
 
-app_express.get('/auth/meetup', passport.authenticate('meetup'));
+app_express.get('/auth/meetup', passport.authenticate('meetup')); // passport
 
 app_express.get('/auth/meetup/callback',
     passport.authenticate('meetup',
