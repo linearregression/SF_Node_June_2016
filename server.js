@@ -28,7 +28,10 @@ app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 */
 
 var passport = require('passport'); // passport
-var passport = require('passport-meetup-oauth2'); // passport
+
+// Initialize Passport
+var initPassport = require('./routes/passport-init'); // passport
+initPassport(passport); // passport
 
 app_express.get('/', function (req, res) {
     res.send(222); // [NOTE] show this response with Morgan logger, then change to ( res.send(222); )
@@ -58,8 +61,8 @@ app_express.post('login',
     )
 ); // passport
 
-// Meetup Strategy
-var MeetupStrategy = require('passport-meetup-oauth2').Strategy;
+/* NOTE - already moved to passport-init.js but commented output
+
 passport.use(new MeetupStrategy({
     clientID: config.meetup.KEY,
     clientSecret: config.meetup.SECRET,
@@ -78,6 +81,7 @@ app_express.get('/auth/meetup/callback',
         // successful authentication, redirect home
         res.redirect('/');
     }); // passport
+    */
 
 var server = app_express.listen({
     host: 'localhost',

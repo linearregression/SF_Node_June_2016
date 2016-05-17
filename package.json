@@ -24,7 +24,6 @@
     "acl": "^0.4.9",
     "bcrypt": "^0.8.6",
     "express": "^4.13.4",
-    "googleapis": "^5.2.1",
     "moment": "^2.13.0",
     "mongoose": "^4.4.16",
     "morgan": "^1.7.0",
