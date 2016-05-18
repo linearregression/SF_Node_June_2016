@@ -33,6 +33,9 @@ var passport = require('passport'); // passport
 var initPassport = require('./routes/passport-init'); // passport
 initPassport(passport); // passport
 
+var auth = require('./routes/authenticate')(passport); // passport
+
+
 app_express.get('/', function (req, res) {
     res.send(222); // [NOTE] show this response with Morgan logger, then change to ( res.send(222); )
 }); // express
