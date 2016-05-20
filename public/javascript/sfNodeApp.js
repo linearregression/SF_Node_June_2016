@@ -1,16 +1,20 @@
 angular
     .module('sna',['ngRoute','ngResource'])
-    .config(function($httpProvider, $routeProvider,$locationProvider){
+    .config(function($httpProvider, $routeProvider, $locationProvider){
         $routeProvider
             .when('/login', {
-                templateUrl:'login.html',
-                controller: 'loginCtrl'
+                templateUrl:'login.html'
+                , controller: 'loginCtrl'
+            })
+            .when('/', {
+                templateUrl: 'index.html'
+                , controller: 'loginCtrl'
             })
     })
-    .run(function ($rootScope,$location,$http){
+    .run(function ($rootScope,$location){
         $rootScope.authenticate = false;
         $rootScope.current_user = 'Guest';
-        $location.url('login');
+        $location.url('/login');
     })
     .controller('loginCtrl', loginCtrl);
     

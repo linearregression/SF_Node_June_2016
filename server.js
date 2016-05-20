@@ -1,13 +1,19 @@
 var express = require('express'); // express
 var app_express = express(); // express
 
+app_express.use(express.static('public')); // express
+/*
+// safer way to use express on a host
+app_express.use(express.static(__direname + 'public')); // express 
+*/
+
 var models = require('./models/models-sfnode.js'); // mongoose
 var mongoose = require('mongoose'); // mongoose
 
 var meetupEvent = mongoose.model('meetupEvent'); // mongoose
 var googleEvent = mongoose.model('googleEvent'); // mongoose
 
-mongoose.connect('mongodb://localhost/sfnode2016'); // mongoose
+mongoose.connect('mongodb://localhost/sfnode2016:3000'); // mongoose
 
 // [NOTE] use fs for writing logs to file
 // var fs = require('fs'); // morgan
@@ -33,58 +39,13 @@ var passport = require('passport'); // passport
 var initPassport = require('./routes/passport-init'); // passport
 initPassport(passport); // passport
 
-var auth = require('./routes/authenticate')(passport); // passport
+//var auth = require('./routes/authenticate')(passport); // passport // below is an alternate way of doing it that matches initPassport
+var auth = require('./routes/authenticate'); // passport
+auth(passport); //passport
 
 
-app_express.get('/', function (req, res) {
-    res.send(222); // [NOTE] show this response with Morgan logger, then change to ( res.send(222); )
-}); // express
-
-/*
-// custom success function
-app_express.post('/login',
-    passport.authenticate('local'),
-    function(req, res){
-        // 'req.user' contains the authenticated user
-        res.redirect('/users/' + req.user.username);
-    }
-); // passport
-
-*/
-
-// Local strategy
-// built in definitions for success and failure action
-app_express.post('login',
-    passport.authenticate('local',
-        {
-            successRedirect: '/',
-            failureRedirect: '/login',
-            failureFlash: true // flash an error message for the user
-        }
-    )
-); // passport
-
-/* NOTE - already moved to passport-init.js but commented output
-
-passport.use(new MeetupStrategy({
-    clientID: config.meetup.KEY,
-    clientSecret: config.meetup.SECRET,
-    callbackURL: 'http://localhost:3000/auth/meetup/callback'
-}, function (accessToken, refreshToken, profile, done) {
-    // store credentials, etc
-})
-); // passport
-
-app_express.get('/auth/meetup', passport.authenticate('meetup')); // passport
-
-app_express.get('/auth/meetup/callback',
-    passport.authenticate('meetup',
-        { failureRedirect: '/login' }),
-    function (req, res) {
-        // successful authentication, redirect home
-        res.redirect('/');
-    }); // passport
-    */
+//[NOTE] show this response with Morgan logger, then REMOVE
+//app_express.get('/', function (req, res) {res.sendStatus(222)}); // express
 
 var server = app_express.listen({
     host: 'localhost',

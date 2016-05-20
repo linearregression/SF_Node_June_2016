@@ -21,7 +21,7 @@ var MeetupStrategy = require('passport-meetup-oauth2').Strategy; // passport
 // var bCrypt = require('bcrypt-nodejs');
 
 // configuration file with secrets and client ID's
-var config = require('./config-sfnode');
+var config = require('../config-sfnode');
 
 module.exports = function (passport) {
 
@@ -96,11 +96,11 @@ module.exports = function (passport) {
                 } else {
 
                     // if there is no user, create the user
-                    var newUser = new User();
+                    var newUser = new People();
 
                     //set the user's local credentials
                     newUser.username = username;
-                    newUser.password = createHash(password);
+                    newUser.password = password; //createHash(password); [TO DO] - add password encryption when login works.
                     newUser.usrEmail = req.body.usrEmail;
                     newUser.usrFirst = req.body.usrFirst;
                     newUser.usrLast = req.body.usrLast;
@@ -118,10 +118,32 @@ module.exports = function (passport) {
                 };
             });
         }));
+        
+/*
+// custom success function
+app_express.post('/login',
+    passport.authenticate('local'),
+    function(req, res){
+        // 'req.user' contains the authenticated user
+        res.redirect('/users/' + req.user.username);
+    }
+); // passport
+
+// Local strategy
+// built in definitions for success and failure action
+app_express.post('login',
+    passport.authenticate('local',
+        {
+            successRedirect: '/',
+            failureRedirect: '/login',
+            failureFlash: true // flash an error message for the user
+        }
+    )
+); // passport
+*/
+
 
     // Google Login
-
-    //passport.use('google', new GoogleStrategy({
     passport.use(new GoogleStrategy({
         clientID: config.google.GOOGLE_CLIENT_ID,
         clientSecret: config.google.GOOGLE_CLIENT_SECRET,
@@ -144,14 +166,14 @@ module.exports = function (passport) {
                 if (user) {
                     console.log('User already exist with username: ' + user.username);
 
-                    return done(null, user); //works
+                    return done(null, user); 
                 } else {
                     // if there is no user, create the user
-                    var newUser = new User();
+                    var newUser = new People();
 
                     //set the user's local credentials
                     newUser.username = profile.displayName;
-                    newUser.password = createHash(accessToken);
+                    newUser.password = accessToken; //createHash(accessToken); [TO DO] - add password encryption when login works.
                     newUser.usrEmail = JSON.stringify(profile.emails); //can't get value with email, work on syntax 2015-10-10
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
@@ -176,20 +198,10 @@ module.exports = function (passport) {
         }));
 
     // meetup.com login
-    /*
-    meetup.com api reference - http://www.meetup.com/meetup_api/
-    
-    Passport module & integration - https://github.com/joewoodhouse/passport-meetup-oauth2
-    */
-    // Meetup configuration
-    var MEETUP_APP_ID = '13m7875vnsacf3tob08i12a9i7';
-    var MEETUP_APP_SECRET = 'fljkqcdi4snvf9khtpt3k5il8s';
-    var MEETUP_CALLBACK_URL = 'https://localhost:3000/auth/meetup/callback';
-
     passport.use(new MeetupStrategy({
-        clientID: MEETUP_APP_ID,
-        clientSecret: MEETUP_APP_SECRET,
-        callbackURL: MEETUP_CALLBACK_URL
+        clientID: config.meetup.MEETUP_KEY,
+        clientSecret: config.meetup.MEETUP_SECRET,
+        callbackURL: config.meetup.MEETUP_CALL_BACK_URL
     },
         function (accessToken, refreshToken, profile, done) {
 
@@ -211,7 +223,7 @@ module.exports = function (passport) {
                     return done(null, user); //works
                 } else {
                     // if there is no user, create the user
-                    var newUser = new User();
+                    var newUser = new People();
 
                     //set the user's local credentials
                     newUser.username = profile.displayName;

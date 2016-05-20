@@ -17,6 +17,11 @@ var googleEvent = new Schema({
 var people = new Schema({
     username:{type:String, trim:true}
     , password:{type:String, trim:true}
+    , usrEmail: {type:String, trim:true}
+    , usrFirst: {type:String, trim:true}
+    , usrLast: {type:String, trim:true}
+    , usrAccessToken: {type:String, trim:true}
+    , usrRefreshToken: {type:String, trim:true}
 });
 
 mongoose.model('meetupEvent',meetupEvent);
