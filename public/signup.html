@@ -1,0 +1,32 @@
+<div class="col-xs-12 col-sm-6 col-md-8">
+    <form ng-submit="register()">
+        <div>
+            <label>Username:<span class="color-red">*</span></label>
+            <input required type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)" value="trewaters">
+        </div>
+        
+        <div>
+            <label>Password:<span class="color-red">*</span></label>
+            <input required type="password" ng-model="password" class="form-control" min="3" max="128" title="Input password (max length 128 characters)" value="trewaters">
+        </div>
+        
+        <div>
+            <label>Email:<span class="color-red">*</span></label>
+            <input required type="email" ng-model="usrEmail" class="form-control" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" placeholder="name@domain.com" value="trewaters@hotmail.com">
+        </div>
+        
+        <div>
+            <label>First Name:<span class="color-red">*</span></label>
+            <input required type="text" ng-model="usrFirst" class="form-control" min="1" max="32" title="Input First name (max length 32 characters)" placeholder="First Name" value="Tre'">
+        </div>
+        
+        <div>
+            <label>Last Name:<span class="color-red">*</span></label>
+            <input required type="text" ng-model="usrLast" class="form-control" min="1" max="32" title="Input Last name (max length 32 characters)" placeholder="Last Name" value="Grisby">
+        </div>
+        <div>
+            <input type="submit" value="Log In">
+        </div>
+    </form>
+    
+</div>

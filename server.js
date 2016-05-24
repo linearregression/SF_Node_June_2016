@@ -1,19 +1,30 @@
 var express = require('express'); // express
 var app_express = express(); // express
 
-app_express.use(express.static('public')); // express
+//app_express.use(express.static('public')); // express
+var path = require('path');
+app_express.use(express.static(path.join(__dirname, 'public')));
+
 /*
 // safer way to use express on a host
-app_express.use(express.static(__direname + 'public')); // express 
+app_express.use(express.static(__dirname + 'public')); // express 
 */
 
-var models = require('./models/models-sfnode.js'); // mongoose
-var mongoose = require('mongoose'); // mongoose
+var passport = require('passport'); // passport
+//var auth = require('./routes/authenticate')(passport); // passport // below is an alternate way of doing it that matches initPassport
+var authenticate = require('./routes/authenticate')(passport); // passport
+var initPassport = require('./routes/passport-init')(passport); // passport
 
+
+var mongoose = require('mongoose'); // mongoose
+/*
+var models = require('./models/models-sfnode.js'); // mongoose
 var meetupEvent = mongoose.model('meetupEvent'); // mongoose
 var googleEvent = mongoose.model('googleEvent'); // mongoose
+var People = mongoose.model('people'); // mongoose
+*/
 
-mongoose.connect('mongodb://localhost/sfnode2016:3000'); // mongoose
+mongoose.connect('mongodb://localhost/sfnode2016'); // mongoose
 
 // [NOTE] use fs for writing logs to file
 // var fs = require('fs'); // morgan
@@ -33,19 +44,45 @@ var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a
 app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 */
 
-var passport = require('passport'); // passport
+var session = require('express-session');// passport
+var bodyParser = require('body-parser'); // passport
+var cookieParser = require('cookie-parser'); // passport
+var session = require('express-session'); // passport
 
 // Initialize Passport
-var initPassport = require('./routes/passport-init'); // passport
-initPassport(passport); // passport
+app_express.use(cookieParser());// passport
+app_express.use(bodyParser());// passport
+var config = require('./config-sfnode');// passport
+app_express.use(session({ secret: config.secret.phrase }));// passport
+app_express.use(passport.initialize());// passport
+app_express.use(passport.session());// passport
 
-//var auth = require('./routes/authenticate')(passport); // passport // below is an alternate way of doing it that matches initPassport
-var auth = require('./routes/authenticate'); // passport
-auth(passport); //passport
-
+app_express.use('/auth', authenticate); // passport
 
 //[NOTE] show this response with Morgan logger, then REMOVE
 //app_express.get('/', function (req, res) {res.sendStatus(222)}); // express
+
+/*
+https notes:
+( https://nodejs.org/api/tls.html )
+( https://engineering.circle.com/https-authorized-certs-with-node-js-315e548354a2#.f0w1qh5wo )
+( https://blogs.msdn.microsoft.com/robert_mcmurray/2013/11/15/how-to-trust-the-iis-express-self-signed-certificate/ ) windows solution for cert export
+( https://code.google.com/archive/p/openssl-for-windows/downloads ) download openssl from google
+( http://www.c-sharpcorner.com/UploadFile/82b980/creating-https-server-with-nodejs/ ) this worked!!!
+- ( C:\Users\Tre'\openssl-0.9.8k_X64\bin ) my location to generate keys
+
+*/
+var https = require('https');
+var fs = require('fs');
+
+var options = {
+  key: fs.readFileSync('keys/hostkey.pem'),
+  cert: fs.readFileSync('keys/hostcert.pem')
+};
+
+https.createServer(options, app_express).listen(443); // passport
+
+// http://www.meetup.com/meetup_api/auth/#oauth2
 
 var server = app_express.listen({
     host: 'localhost',

@@ -3,19 +3,41 @@ var router = express.Router();
 
 module.exports = function (passport) {
 
-    router.post('/login', passport.authenticate('login'), // passport
+    /*
+    // custom callback
+    router.get('/login', function(req,res,next){
+        passport.authenticate('local', function(err,user, info){
+            
+            if (err) { return next(err);}
+            
+            if (!user) { return res.redirect('/login');}
+            
+            req.logIn(user, function(err){
+                
+                if (err) { return next(err);}
+                return res.redirect('/users/' + user.username);
+            });
+        })(req,res,next);
+    });
+    */
+
+    router.post('/login', // passport
+        passport.authenticate('login', {
+            successRedirect: '/',
+            failureRedirect: '/login',
+            failureFlash: true
+        })
+    );
+
+    router.post('/signup', // passport
+    passport.authenticate('signup'), 
         function (req, res) {
             res.send(req.user);
         });
 
-    router.post('/signup', passport.authenticate('signup'), // passport
-        function (req, res) {
-            res.send(req.user);
-        });
-
-    router.get('/signout', function (req, res) { // passport
+    router.get('/logout', function (req, res) { // passport
         req.logout();
-        res.redirect(200, '/#/login');
+        res.redirect(200, '/');
     });
 
     router.get('/loggedin', function (req, res) { // passport
@@ -35,21 +57,21 @@ module.exports = function (passport) {
     // Otherwise, authentication has failed.
     router.get('/google/oauth2callback', // passport
         passport.authenticate('google', {
-            failureRedirect: '/auth/login'
+            failureRedirect: '/login'
         }),
         function (req, res) {
             // Successful authentication, redirect
-            res.redirect('/');
+            res.redirect('/google');
         });
-        
-        // Meetup login
+
+    // Meetup login
     router.get('/meetup', passport.authenticate('meetup', { scope: 'basic' })); // passport  
 
     router.get('/meetup/callback', // passport  
         passport.authenticate('meetup', { failureRedirect: '/login' }),
         function (req, res) {
             // Successful authentication, redirect
-            res.redirect('/');
+            res.redirect('/google');
         });
 
     return router;
