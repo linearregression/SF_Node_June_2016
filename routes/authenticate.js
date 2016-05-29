@@ -22,22 +22,21 @@ module.exports = function (passport) {
     */
 
     router.post('/login', // passport
-        passport.authenticate('login', {
-            successRedirect: '/',
-            failureRedirect: '/login',
-            failureFlash: true
-        })
+        passport.authenticate('login'),
+        function (req, res) {
+            res.send(req.user);
+        }
     );
 
     router.post('/signup', // passport
-    passport.authenticate('signup'), 
+        passport.authenticate('signup'),
         function (req, res) {
             res.send(req.user);
         });
 
     router.get('/logout', function (req, res) { // passport
         req.logout();
-        res.redirect(200, '/');
+        res.redirect('/');
     });
 
     router.get('/loggedin', function (req, res) { // passport
@@ -49,7 +48,8 @@ module.exports = function (passport) {
     // complete, the provider will redirect the user back to the application at
     //     '/google/oauth2callback'
     router.get('/google', // passport
-        passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'] }), function (req, res) { });
+        passport.authenticate('google',
+            { scope: ['https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'] }));
 
     // The OAuth 2.0 provider has redirected the user back to the application.
     // Finish the authentication process by attempting to obtain an access
@@ -57,22 +57,34 @@ module.exports = function (passport) {
     // Otherwise, authentication has failed.
     router.get('/google/oauth2callback', // passport
         passport.authenticate('google', {
-            failureRedirect: '/login'
+            failureRedirect: '/'
         }),
         function (req, res) {
             // Successful authentication, redirect
-            res.redirect('/google');
+             res.redirect('/');
+             
         });
 
     // Meetup login
-    router.get('/meetup', passport.authenticate('meetup', { scope: 'basic' })); // passport  
+    router.get('/meetup',
+        passport.authenticate('meetup')
+        ); // passport  
 
     router.get('/meetup/callback', // passport  
-        passport.authenticate('meetup', { failureRedirect: '/login' }),
+        passport.authenticate('meetup', {
+            failureRedirect: '/'
+        }),
         function (req, res) {
             // Successful authentication, redirect
-            res.redirect('/google');
+            res.redirect('/');
         });
 
+    /*
+    Meetup error
+    
+    Invalid Authorization request - 
+    https://secure.meetup.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A443%2Fauth%2Fmeetup%2Fcallback&scope=basic&client_id=emqbu6doknhsgs3h409rnm7u26
+    
+    */
     return router;
 };

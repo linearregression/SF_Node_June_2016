@@ -11,15 +11,14 @@ var People = require('../models/models-sfnode');
 var LocalStrategy = require('passport-local').Strategy; // passport
 
 // Google Strategy
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy; // passport
+var GoogleStrategy = require('passport-google-oauth20').Strategy; // passport
 
 // Meetup Strategy
-var MeetupStrategy = require('passport-meetup-oauth2').Strategy; // passport
+var MeetupStrategy = require('passport-meetup').Strategy; // passport
 
 // password encryption 
-// [TO DO] - code this!!
-// [NOTE] put in correct bcrypt code. This is from another module
-// var bCrypt = require('bcrypt-nodejs');
+var bCrypt = require('bcrypt'); // bcrypt
+var saltRounds = 10; // bcrypt
 
 // configuration file with secrets and client ID's
 var config = require('../config-sfnode');
@@ -59,11 +58,11 @@ module.exports = function (passport) {
                 if (!user) {
                     return done(null, false, { message: 'Incorrect username ' + username });
                 }
-                /*
-                if (!user.!user.validPassword(password)) {
+                
+                if (!bCrypt.compareSync(password, user.password)) { // bcrypt
                     return done(null, false, {message: 'Invalid Password for username ' + username });
                 }
-                */
+                
                 return done(null, user);
             });
         }
@@ -85,13 +84,17 @@ module.exports = function (passport) {
                 } else {
                     // if there is no user, create the user
                     var newUser = new People();
+                    
+                    var salt = bCrypt.genSaltSync(saltRounds); //bcrypt
+                    var hash = bCrypt.hashSync(password,salt); //bcrypt
 
                     //set the user's local credentials
                     newUser.username = username;
-                    newUser.password = password; //createHash(password); [TO DO] - add password encryption when login works.
+                    newUser.password =  hash; // bcrypt
                     newUser.usrEmail = req.body.usrEmail;
                     newUser.usrFirst = req.body.usrFirst;
                     newUser.usrLast = req.body.usrLast;
+                    newUser.usrSocial = 'local';
 
                     newUser.save(function (err) {
 
@@ -112,65 +115,69 @@ module.exports = function (passport) {
         callbackURL: config.google.GOOGLE_CALL_BACK_URL
         //,passReqToCallback: true // allows us to pass back the entire request to the callback
     },
-        function (accessToken, refreshToken, profile, done) {
+        function (accessToken, refreshToken, profile, cb) {
 
             console.log(profile); // [DEBUG]
 
-            People.findOne({ 'username': profile.displayName }, function (err, user) {
+            process.nextTick(function () {
+                People.findOne({ 'googleId': profile.id }, function (err, user) {
 
-                // error check, return using the done method
-                if (err) {
-                    console.log('Error in sign up: ' + err); // [DEBUG]
-                    return done(err);
-                }
-                //already exist
-                if (user) {
-                    console.log('User already exist with username: ' + user.username); // [DEBUG]
+                    // error check, return using the done method
+                    if (err) {
+                        console.log('Error in sign up: ' + err); // [DEBUG]
+                        return cb(err);
+                    }
+                    //already exist
+                    if (user) {
+                        console.log('User already exist with username: ' + user.username); // [DEBUG]
 
-                    return done(null, user);
-                } else {
-                    // if there is no user, create the user
-                    var newUser = new People();
+                        return cb(null, user);
+                    } else {
+                        // if there is no user, create the user
+                        var newUser = new People();
 
-                    //set the user's local credentials
-                    newUser.username = profile.displayName;
-                    newUser.password = accessToken; //createHash(accessToken); [TO DO] - add password encryption when login works.
-                    newUser.usrEmail = JSON.stringify(profile.emails); //can't get value with email, work on syntax 2015-10-10
-                    newUser.usrFirst = profile.name.familyName;
-                    newUser.usrLast = profile.name.givenName;
-                    newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
-                    newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
+                        //set the user's local credentials
+                        newUser.username = profile.displayName;
+                        newUser.password = accessToken; //createHash(accessToken); [TO DO] - add password encryption when login works.
+                        newUser.googleId = profile.id;
+                        newUser.usrEmail = profile.emails[0].value;
+                        newUser.usrFirst = profile.name.familyName;
+                        newUser.usrLast = profile.name.givenName;
+                        newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
+                        newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
+                        newUser.usrSocial = 'google';
 
-                    // save the user
-                    newUser.save(function (err) {
-                        if (err) {
-                            console.log('Error saving user: ' + err);
-                            throw err;
-                        }
-                        console.log(newUser.username + ' Registration successful');
-                        return done(null, newUser);
-                    });
-                }
-                // User and password both match, return user from done method
-                // which will be treated like success
-                return done(null, user);
+                        // save the user
+                        newUser.save(function (err) {
+                            if (err) {
+                                console.log('Error saving user: ' + err);
+                                throw err;
+                            }
+                            console.log(newUser.username + ' Registration successful');
+                            return cb(null, newUser);
+                        });
+                    }
+                    // User and password both match, return user from done method
+                    // which will be treated like success
+                    return cb(null, user);
+                });
             });
+
 
         }));
 
     // meetup.com login
-    passport.use(new MeetupStrategy({
-        clientID: config.meetup.MEETUP_KEY,
-        clientSecret: config.meetup.MEETUP_SECRET,
+    passport.use('meetup', new MeetupStrategy({
+        consumerKey: config.meetup.MEETUP_KEY,
+        consumerSecret: config.meetup.MEETUP_SECRET,
         callbackURL: config.meetup.MEETUP_CALL_BACK_URL
     },
-        function (accessToken, refreshToken, profile, done) {
+        function (token, tokenSecret, profile, done) {
 
-            // rference - 
-            console.log(profile);// [DEBUG]
+            console.log('profile = ' + JSON.stringify(profile));// [DEBUG]
 
             //find a user in mongo with this username
-            People.findOne({ 'username': profile.displayName }, function (err, user) {
+            People.findOne({ 'meetupId': profile.id }, function (err, user) {
 
                 // error check, return using the done method
                 if (err) {
@@ -189,10 +196,12 @@ module.exports = function (passport) {
                     //set the user's local credentials
                     newUser.username = profile.displayName;
                     newUser.usrEmail = JSON.stringify(profile.emails); //can't get value with email, work on syntax 2015-10-10
+                    newUser.meetupId = profile.id;
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
-                    newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
-                    newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
+                    newUser.usrAccessToken = token; // [TO DO] - hash this data if possible, 11/14/2015
+                    newUser.usrRefreshToken = tokenSecret; // [TO DO] - hash this data if possible, 11/14/2015
+                    newUser.usrSocial = 'meetup';
 
                     // save the user
                     newUser.save(function (err) {

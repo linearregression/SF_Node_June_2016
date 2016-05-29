@@ -16,11 +16,14 @@ var googleEventSchema = new mongoose.Schema({
 var peopleSchema = new mongoose.Schema({
     username: { type: String, trim: true }
     , password: { type: String, trim: true }
+    , googleId: { type: String, trim: true }
+    , meetupId: { type: String, trim: true }
     , usrEmail: { type: String, trim: true }
     , usrFirst: { type: String, trim: true }
     , usrLast: { type: String, trim: true }
     , usrAccessToken: { type: String, trim: true }
     , usrRefreshToken: { type: String, trim: true }
+    , usrSocial: { type: String, trim: true }
 });
 
 var People = mongoose.model('People', peopleSchema);

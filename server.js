@@ -1,9 +1,10 @@
 var express = require('express'); // express
 var app_express = express(); // express
 
-//app_express.use(express.static('public')); // express
-var path = require('path');
-app_express.use(express.static(path.join(__dirname, 'public')));
+//var path = require('path'); // [NOTE] - remove if missing this doesn't cause any errors. 5/28/2016
+
+//app_express.use(express.static(path.join(__dirname, 'public'))); // express
+app_express.use(express.static(__dirname + '/public')); //DEBUG
 
 /*
 // safer way to use express on a host
@@ -11,10 +12,8 @@ app_express.use(express.static(__dirname + 'public')); // express
 */
 
 var passport = require('passport'); // passport
-//var auth = require('./routes/authenticate')(passport); // passport // below is an alternate way of doing it that matches initPassport
 var authenticate = require('./routes/authenticate')(passport); // passport
 var initPassport = require('./routes/passport-init')(passport); // passport
-
 
 var mongoose = require('mongoose'); // mongoose
 /*
@@ -81,7 +80,6 @@ var options = {
 };
 
 https.createServer(options, app_express).listen(443); // passport
-
 // http://www.meetup.com/meetup_api/auth/#oauth2
 
 var server = app_express.listen({

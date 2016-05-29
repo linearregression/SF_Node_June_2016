@@ -1,5 +1,5 @@
 <div class="col-xs-12 col-sm-6 col-md-8">
-    <form ng-submit="login(choiceStrategy)">
+    <form ng-submit="login()">
         <div>
             <label>Username:</label>
             <input type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)">
@@ -14,12 +14,18 @@
         </div>
     </form>
 
+    <p>Login or Register with:</p>
+
     <p>
-        <a class="btn btn-default" href="/auth/google"><i class="fa fa-google-plus fa-2x"></i>Login with Google</a>
+        <a class="btn btn-default" href="/auth/google"><i class="fa fa-google-plus fa-2x"></i>Google</a>
     </p>
     </p>
-    <a class="btn btn-default" href="/auth/meetup"> Login with Meetup</a>
+    <a class="btn btn-default" href="/auth/meetup">Meetup</a>
     </p>
 
-    <a href="#/signup">Register</a>
+    <a class="btn btn-default" href="#/signup">Register</a>
+</div>
+
+<div>
+    
 </div>

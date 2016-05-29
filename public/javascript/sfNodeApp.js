@@ -14,7 +14,7 @@ angular
                 templateUrl: 'signup.html'
                 , controller: 'loginCtrl'
             })
-            .when('/google', {
+            .when('/googleSuccess', {
                 templateUrl: 'gEvent.html'
                 , controller: 'loginCtrl'
             })
@@ -47,6 +47,8 @@ function loginCtrl($scope, $http, $location) {
                 'usrLast': $scope.usrLast
             }
         }).then(function successCallback(response) {
+            //$location.url('/googleSuccess');
+            
             // this callback will be called asynchronously
             // when the response is available
         }, function errorCallback(response) {
@@ -56,32 +58,19 @@ function loginCtrl($scope, $http, $location) {
     };
 
     $scope.login = function () {
-        $http.post('/auth/login', { 'username': $scope.username, 'password': $scope.password }).then(
+        $http.post('/auth/login', { 'username': $scope.username, 'password': $scope.password }
+        ).then(
                     function successCallback(response) {
-                        $location.url('/google');
+                        $location.url('/googleSuccess');
+                        
                         // this callback will be called asynchronously
                         // when the response is available
                     }, function errorCallback(response) {
+                        $location.url('/');
+                        
                         // called asynchronously if an error occurs
                         // or server returns response with an error status.
                     });
     };
 
-    $scope.logout = function () {
-        console.log('logout');
-        $http.post('/auth/logout');
-    };
-
-    // login for website ? not sure if they need to log into website yet.
-    // authentication for meetup
-
-    /*
-    // variables I have added that need to be defined
-    $scope.user = {username: '', password:''};
-    
-    $scope.login = function(){
-        $scope.username;
-        $scope.password;
-    };
-    */
 };
