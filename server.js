@@ -1,29 +1,14 @@
 var express = require('express'); // express
 var app_express = express(); // express
 
-//var path = require('path'); // [NOTE] - remove if missing this doesn't cause any errors. 5/28/2016
-
-//app_express.use(express.static(path.join(__dirname, 'public'))); // express
-app_express.use(express.static(__dirname + '/public')); //DEBUG
-
-/*
-// safer way to use express on a host
-app_express.use(express.static(__dirname + 'public')); // express 
-*/
+app_express.use(express.static(__dirname + '/public')); //express
 
 var passport = require('passport'); // passport
 var authenticate = require('./routes/authenticate')(passport); // passport
 var initPassport = require('./routes/passport-init')(passport); // passport
+var api = require('./routes/api'); 
 
-var mongoose = require('mongoose'); // mongoose
-/*
-var models = require('./models/models-sfnode.js'); // mongoose
-var meetupEvent = mongoose.model('meetupEvent'); // mongoose
-var googleEvent = mongoose.model('googleEvent'); // mongoose
-var People = mongoose.model('people'); // mongoose
-*/
-
-mongoose.connect('mongodb://localhost/sfnode2016'); // mongoose
+//var db = require('./models/db'); // mongoose
 
 // [NOTE] use fs for writing logs to file
 // var fs = require('fs'); // morgan
@@ -57,6 +42,7 @@ app_express.use(passport.initialize());// passport
 app_express.use(passport.session());// passport
 
 app_express.use('/auth', authenticate); // passport
+app_express.use('/api', api); // passport
 
 //[NOTE] show this response with Morgan logger, then REMOVE
 //app_express.get('/', function (req, res) {res.sendStatus(222)}); // express

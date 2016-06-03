@@ -49,41 +49,13 @@
 
 </head>
 
-<body ng-controller="loginCtrl">
+<body ng-controller="muCtrl">
 
+    <a href="/api/muEvents" class="btn btn-default">Get Meetup Events</a>
+    <br><br>
 
-    <div class="col-xs-12 col-sm-6 col-md-8">
-        <form ng-submit="login()">
-            <div>
-                <label>Username:</label>
-                <input type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)">
-            </div>
-
-            <div>
-                <label>Password:</label>
-                <input type="password" ng-model="password" class="form-control" ng-model="password" min="11" max="128" title="Input password (max length 128 characters)">
-            </div>
-            <div>
-                <input type="submit" value="Log In">
-            </div>
-        </form>
-
-        <p>Login or Register with:</p>
-
-        <p>
-            <a class="btn btn-default" href="/auth/google">Google</a>
-        </p>
-        
-        </p>
-            <a class="btn btn-default" href="/auth/meetup">Meetup</a>
-        </p>
-        
-        </p>
-            <a class="btn btn-default" href="http://localhost:3000/signup.html">Register</a>
-        </p>
-
-    </div>
-
+    <button ng-click="meetupEvents()" class="btn btn-default">Meetup Events - function</button>
+    <br><br>
 
     <a href="/auth/logout" class="btn btn-default">Logout</a>
 

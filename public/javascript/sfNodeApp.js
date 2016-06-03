@@ -1,39 +1,21 @@
-angular
-    .module('sna', ['ngRoute', 'ngResource'])
-    .config(function ($httpProvider, $routeProvider, $locationProvider) {
-        $routeProvider
-            .when('/login', {
-                templateUrl: 'login.html'
-                , controller: 'loginCtrl'
-            })
-            .when('/', {
-                templateUrl: 'index.html'
-                , controller: 'loginCtrl'
-            })
-            .when('/signup', {
-                templateUrl: 'signup.html'
-                , controller: 'loginCtrl'
-            })
-            .when('/googleSuccess', {
-                templateUrl: 'gEvent.html'
-                , controller: 'loginCtrl'
-            })
-    })
-    .run(function ($rootScope, $location) {
-        $rootScope.authenticate = false;
-        $rootScope.current_user = 'Guest';
-        $location.url('/login');
-    })
-    .controller('loginCtrl', loginCtrl);
+var app =
+    angular.module('sna', ['ngRoute'])
+        .config(function ($locationProvider) {
 
-function loginCtrl($scope, $http, $location) {
-    /*
-        $scope.username = 'trewaters';
-        $scope.password = 'trewaters';
-        $scope.usrEmail = 'trewaters@hotmail.com';
-        $scope.usrFirst = 'Tre\'';
-        $scope.usrLast = 'Grisby';
-    */
+            $locationProvider.html5Mode({
+                enabled: true
+                , requireBase: false
+            });
+            
+            
+        })
+        .run(function ($rootScope) {
+            $rootScope.authenticate = false;
+            $rootScope.current_user = 'Guest';
+        });
+
+app.controller('loginCtrl', function ($scope, $http, $window,$rootScope) {
+
     $scope.register = function () {
 
         $http({
@@ -47,8 +29,11 @@ function loginCtrl($scope, $http, $location) {
                 'usrLast': $scope.usrLast
             }
         }).then(function successCallback(response) {
-            //$location.url('/googleSuccess');
+            console.log('register response = ' + response);//DEBUG
             
+            $rootScope.current_user = response.data.username;
+            $window.location.href='http://localhost:3000/profile.html';
+
             // this callback will be called asynchronously
             // when the response is available
         }, function errorCallback(response) {
@@ -58,19 +43,51 @@ function loginCtrl($scope, $http, $location) {
     };
 
     $scope.login = function () {
-        $http.post('/auth/login', { 'username': $scope.username, 'password': $scope.password }
+        $http.post('/auth/login',
+            { 'username': $scope.username, 'password': $scope.password }
         ).then(
-                    function successCallback(response) {
-                        $location.url('/googleSuccess');
-                        
-                        // this callback will be called asynchronously
-                        // when the response is available
-                    }, function errorCallback(response) {
-                        $location.url('/');
-                        
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
-                    });
+            function successCallback(response) {
+                console.log('login response = ' + JSON.stringify(response));//DEBUG
+                
+                $rootScope.current_user = data.username;
+                $rootScope._id = data._id;
+                $window.location.href='http://localhost:3000/profile.html';
+
+/*
+login response = {"data":{"_id":"574ce8ace7d9e86c0a2844a7","usrSocial":"local","usrLast":"Grisby III","usrFirst":"tre","usrEmail":"trewaters@hotmail.com","password":"$2a$10$Mg5TfKxZ6usZ50tb5MTU7OngjSqxBKRzxshLthbrOkBW9Q7Rru9Ze","username":"tre","__v":0},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"/auth/login","data":{"username":"tre","password":"tre"},"headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}},"statusText":"OK"}
+*/
+                // this callback will be called asynchronously
+                // when the response is available
+            }, function errorCallback(response) {
+                $window.location.href= 'http://localhost:3000/index.html';
+
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            });
     };
 
+}
+
+);
+
+app.controller('muCtrl', function ($scope, $http) {
+
+    $scope.MeetupEvents = function () {
+        $http.get('/api/muEvents');
+    };
+
+});
+
+app.controller('profCtrl', function ($scope, $http) {
+
+
+
+});
+
+app.controller('gCtrl', function ($scope, $http) {
+
+$scope.GoogleEvents = function(){
+  $http.get('/api/getCalendar');
 };
+
+});

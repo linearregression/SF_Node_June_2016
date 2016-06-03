@@ -35,7 +35,7 @@
     "passport-google-oauth20": "^1.0.0",
     "passport-local": "^1.0.0",
     "passport-meetup": "^1.0.0",
-    "pem": "^1.8.3",
+    "passport-meetup-oauth2": "0.0.2",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {

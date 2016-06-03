@@ -49,42 +49,12 @@
 
 </head>
 
-<body ng-controller="loginCtrl">
-
-
-    <div class="col-xs-12 col-sm-6 col-md-8">
-        <form ng-submit="login()">
-            <div>
-                <label>Username:</label>
-                <input type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)">
-            </div>
-
-            <div>
-                <label>Password:</label>
-                <input type="password" ng-model="password" class="form-control" ng-model="password" min="11" max="128" title="Input password (max length 128 characters)">
-            </div>
-            <div>
-                <input type="submit" value="Log In">
-            </div>
-        </form>
-
-        <p>Login or Register with:</p>
-
-        <p>
-            <a class="btn btn-default" href="/auth/google">Google</a>
-        </p>
+<body>
+    
+    <div ng-controller="profCtrl">
         
-        </p>
-            <a class="btn btn-default" href="/auth/meetup">Meetup</a>
-        </p>
-        
-        </p>
-            <a class="btn btn-default" href="http://localhost:3000/signup.html">Register</a>
-        </p>
-
     </div>
-
-
+    
     <a href="/auth/logout" class="btn btn-default">Logout</a>
 
 </body>

@@ -23,6 +23,10 @@ var peopleSchema = new mongoose.Schema({
     , usrLast: { type: String, trim: true }
     , usrAccessToken: { type: String, trim: true }
     , usrRefreshToken: { type: String, trim: true }
+    /*
+    , usrToken: {type: String, trim: true}
+    , usrTokenSecret: {type: String, trim: true}
+    */
     , usrSocial: { type: String, trim: true }
 });
 
