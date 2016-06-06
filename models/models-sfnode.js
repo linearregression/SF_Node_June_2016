@@ -17,16 +17,22 @@ var peopleSchema = new mongoose.Schema({
     username: { type: String, trim: true }
     , password: { type: String, trim: true }
     , googleId: { type: String, trim: true }
-    , meetupId: { type: String, trim: true }
-    , usrEmail: { type: String, trim: true }
     , usrFirst: { type: String, trim: true }
     , usrLast: { type: String, trim: true }
+    , usrEmail: { type: String, trim: true }
+    , usrPhotos: { type: String, trim: true}
+    , usrGender: {type: String, trim:true}
+    , usrOccupation: {type: String, trim:true}
+    , usrSkills: {type:String, trim:true}
+    , usrUrls: [String] // NOTE - look into this type ( http://mongoosejs.com/docs/schematypes.html )
     , usrAccessToken: { type: String, trim: true }
     , usrRefreshToken: { type: String, trim: true }
     /*
-    , usrToken: {type: String, trim: true}
-    , usrTokenSecret: {type: String, trim: true}
+    //add time with Moment
+    , usrCreatedDate:{ type:Date, default:Date.now}
+    , usrLastLogin:{type:Date}
     */
+    
     , usrSocial: { type: String, trim: true }
 });
 

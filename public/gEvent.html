@@ -13,10 +13,9 @@
     <!-- Angular CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.js"></script>
-    
-    <!-- 
 
+    <!-- 
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.js"></script>
     -->
 
     <script src="/javascript/sfNodeApp.js"></script>
@@ -52,16 +51,21 @@
 
 <body ng-controller="gCtrl">
 
-Success!    
+    Success!
     <br>
     <br>
     <button class="btn btn-default" ng-click="GoogleEvents()">
     Get my Google calendar
     </button>
     <br>
-    
-    <a href="/auth/logout" class="btn btn-default">Logout</a>
 
+    <a href="/auth/logout" class="btn btn-default">Logout</a>
+    
+    <button class="btn btn-default" ng-click="getUser()">
+    Get current_user
+    </button>
+
+    <p>Logged in user: {{current_user}}</p>
 </body>
 
 </html>

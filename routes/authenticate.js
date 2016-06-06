@@ -18,7 +18,7 @@ module.exports = function (passport) {
 
     router.get('/logout', function (req, res) { // passport
         req.logout();
-        res.redirect('http://localhost:3000/index.html');
+        res.redirect('http://localhost:3000/index.html'); // NOTE - redirect to Logout page
     });
 
     router.get('/loggedin', function (req, res) { // passport
@@ -26,31 +26,19 @@ module.exports = function (passport) {
     });
 
     router.get('/google', // passport
-    
+
         passport.authenticate('google',
-            { scope: ['https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar.readonly'] }));
+            { scope: ['https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'] }
+        )
+    );
 
     router.get('/google/oauth2callback', // passport
         passport.authenticate('google', {
-            failureRedirect: 'http://localhost:3000/index.html'
+            failureRedirect: 'http://localhost:3000/index.html' // NOTE - redirect to Failed Login page
         }),
-        function (req, res) {
-            console.log('successful google Authentication'); // DEBUG
-             res.redirect('http://localhost:3000/gEvent.html');
+        function (req, res) {            
+            res.redirect('http://localhost:3000/profile.html');
         });
 
-    // Meetup login
-    router.get('/meetup', // passport  
-        passport.authenticate('meetup')
-        );
-
-    router.get('/meetup/callback', // passport  
-        passport.authenticate('meetup', {
-            failureRedirect: 'http://localhost:3000/index.html'
-        }),
-        function (req, res) {
-            // Successful authentication, redirect
-            res.redirect('http://localhost:3000/mEvent.html');
-        });
     return router;
 };

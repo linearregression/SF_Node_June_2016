@@ -10,10 +10,6 @@ var LocalStrategy = require('passport-local').Strategy; // passport
 // Google Strategy
 var GoogleStrategy = require('passport-google-oauth20').Strategy; // passport
 
-// Meetup Strategy
-//var MeetupStrategy = require('passport-meetup').Strategy; // passport // DEBUG
-var MeetupStrategy = require('passport-meetup-oauth2').Strategy; // passport 
-
 // password encryption 
 var bCrypt = require('bcrypt'); // bcrypt
 var saltRounds = 10; // bcrypt
@@ -122,11 +118,28 @@ module.exports = function (passport) {
         clientID: config.google.GOOGLE_CLIENT_ID,
         clientSecret: config.google.GOOGLE_CLIENT_SECRET,
         callbackURL: config.google.GOOGLE_CALL_BACK_URL
-        //,passReqToCallback: true // allows us to pass back the entire request to the callback
     },
         function (accessToken, refreshToken, profile, cb) {
 
-            console.log("google: " + profile); // [DEBUG]
+            var vStrProfile = JSON.stringify(profile);
+            
+            console.log("google: " + vStrProfile); // [DEBUG]
+            
+            Object.size = function(profile){
+                var size = 0, key;
+                for (key in profile){
+                  if (profile.hasOwnProperty(key)) {
+                      console.log(size + '. Key = ' + key); // DEBUG
+                      size++;
+                    };  
+                };
+                return size;
+            };
+            
+            var size = Object.size(profile);
+            
+            console.log("how large is objProfile = " + size);
+            
 
             People.findOne({ 'googleId': profile.id }, function (err, user) {
 
@@ -140,6 +153,21 @@ module.exports = function (passport) {
                     console.log('User already exist with username: ' + user.username); // [DEBUG]
 
                     var upUser = new People(user);
+                    upUser.username = profile.displayName;
+                    upUser.usrName = profile.name; 
+                    upUser.usrFirst = profile.name.familyName;
+                    upUser.usrLast = profile.name.givenName;
+                    upUser.usrEmail = profile.emails[0].value;
+                    upUser.usrPhotos = profile.photos[0].value;
+                    upUser.usrGender = profile.gender;
+                    upUser.usrSocial = profile.provider;
+                    upUser.usrOccupation = profile._json.occupation;
+                    upUser.usrSkills = profile._json.skills;
+                    
+                    for(var vUrls = 0; vUrls<profile._json.urls.length;vUrls++){
+                        upUser.usrUrls[vUrls] = profile._json.urls[vUrls].value;
+                    };
+                    
                     upUser.usrAccessToken = accessToken;
                     upUser.usrRefreshToken = refreshToken;
 
@@ -150,22 +178,29 @@ module.exports = function (passport) {
                         }
                         console.log('Tokens updated' + '\n');
                     });
-
                     return cb(err, user);
-                } else {
-                    // if there is no user, create the user
+                } else {// if there is no user, create the user
                     var newUser = new People();
 
                     //set the user's local credentials
-                    newUser.username = profile.displayName;
-                    //newUser.password = accessToken; //createHash(accessToken); [TO DO] - add password encryption when login works.
                     newUser.googleId = profile.id;
-                    newUser.usrEmail = profile.emails[0].value;
+                    newUser.username = profile.displayName;
+                    newUser.usrName = profile.name; 
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
+                    newUser.usrEmail = profile.emails[0].value;
+                    newUser.usrPhotos = profile.photos[0].value;
+                    newUser.usrGender = profile.gender;
+                    newUser.usrSocial = profile.provider;
+                    newUser.usrOccupation = profile._json.occupation;
+                    newUser.usrSkills = profile._json.skills;
+                    
+                    for(var vUrls = 0; vUrls<profile._json.urls.length;vUrls++){
+                        newUser.usrUrls[vUrls] = profile._json.urls[vUrls].value;
+                    };
+                    
                     newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
                     newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
-                    newUser.usrSocial = 'google';
 
                     // save the user
                     newUser.save(function (err) {
@@ -178,64 +213,8 @@ module.exports = function (passport) {
                     return cb(null, user);
                 }
 
-                //return cb(err, user);
-            });
-
-            //return cb(null, profile);
-        }));
-
-    passport.use('meetup', new MeetupStrategy({ // passport
-        clientID: config.meetup.MEETUP_KEY,
-        clientSecret: config.meetup.MEETUP_SECRET,
-        callbackURL: config.meetup.MEETUP_CALL_BACK_URL
-    },
-        function (accessToken, refreshToken, profile, done) {
-
-            console.log('meetup profile = ' + JSON.stringify(profile));// [DEBUG]
-
-            //find a user in mongo with this username
-            People.findOne({ 'meetupId': profile.id }, function (err, user) {
-
-                // error check, return using the done method
-                if (err) {
-                    console.log('Error in sign up: ' + err);
-                    return done(err);
-                }
-                //already exist
-                if (user) {
-                    console.log('User already exist with username: ' + user.username);
-                    var upUser = new People(user);
-                    upUser.usrAccessToken = accessToken;
-                    upUser.usrRefreshToken = refreshToken;
-                    upUser.save(function (err) {
-                        if (err) {
-                            console.log('Error saving user: ' + err);
-                            throw err;
-                        }
-                    });
-                    return done(null, user); //works
-                } else {
-                    // if there is no user, create the user
-                    var newUser = new People();
-
-                    //newUser.username = profile.displayName;
-                    //newUser.usrEmail = JSON.stringify(profile.emails); //can't get value with email, work on syntax 2015-10-10
-                    //newUser.meetupId = profile.id;
-                    newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible,                    
-                    newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible,
-                    newUser.usrSocial = 'meetup';
-
-                    // save the user
-                    newUser.save(function (err) {
-                        if (err) {
-                            console.log('Error saving user: ' + err);
-                            throw err;
-                        }
-                        console.log(newUser.username + ' Registration successful');
-                        return done(null, newUser);
-                    });
-                }
             });
 
         }));
+  
 };
