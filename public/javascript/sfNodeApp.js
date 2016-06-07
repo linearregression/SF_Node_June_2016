@@ -75,6 +75,39 @@ app.controller('profCtrl', function ($scope, $http,$rootScope) {
     
     console.log('profCtrl Begin');//DEBUG
 
+    $http.get('/auth/loggedin').success(function (user) {
+        console.log('user = ' + JSON.stringify(user));
+            if (user !== '0') {
+                // Authenticated
+
+                console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
+                
+
+                $rootScope.authenticated = true;
+                $rootScope.current_user = user.username;
+                $rootScope.username = user.username;
+                $rootScope.password = user.password;
+                $rootScope.googleId = user.googleId;
+                $rootScope.usrFirst = user.usrFirst;
+                $rootScope.usrLast = user.usrLast;
+                $rootScope.usrEmail = user.usrEmail;
+                $rootScope.usrOccupation = user.usrOccupation;
+                $rootScope.usrSkills = user.usrSkills;
+                $rootScope.usrUrls = user.usrUrls;
+                $rootScope.usrAccessToken = user.usrAccessToken;
+                $rootScope.usrRefreshToken = user.usrRefreshToken;
+
+            } else {
+                // Not Authenticated
+
+                console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
+
+                $rootScope.authenticated = false;
+                $rootScope.current_user = 'Guest';
+
+            }
+        });
+/*
     $scope.getUser = function () {
         console.log('checkLoggedIn Begin');//DEBUG
 
@@ -87,7 +120,17 @@ app.controller('profCtrl', function ($scope, $http,$rootScope) {
 
                 $rootScope.authenticated = true;
                 $rootScope.current_user = user.username;
-                $rootScope.user = user;
+                $rootScope.username = user.username;
+                $rootScope.password = user.password;
+                $rootScope.googleId = user.googleId;
+                $rootScope.usrFirst = user.usrFirst;
+                $rootScope.usrLast = user.usrLast;
+                $rootScope.usrEmail = user.usrEmail;
+                $rootScope.usrOccupation = user.usrOccupation;
+                $rootScope.usrSkills = user.usrSkills;
+                $rootScope.usrUrls = user.usrUrls;
+                $rootScope.usrAccessToken = user.usrAccessToken;
+                $rootScope.usrRefreshToken = user.usrRefreshToken;
 
             } else {
                 // Not Authenticated
@@ -100,7 +143,7 @@ app.controller('profCtrl', function ($scope, $http,$rootScope) {
             }
         });
     };
-    
+    */
     
 
 });

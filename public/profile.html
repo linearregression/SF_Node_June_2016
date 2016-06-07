@@ -83,7 +83,7 @@
                         <a href="/index.html">Login</a>
                     </li>
                     <li>
-                        <a href="/profile.html">Provile</a>
+                        <a href="/profile.html">Profile</a>
                     </li>
                 </ul>
             </div>
@@ -113,8 +113,38 @@
             </div>
 
             <div class="col-md-4">
-                <h3>Project Description</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
+                <h3>User Profile</h3>
+                <p>
+                    <dl>
+                        <dt>User:</dt>
+                        <dd>{{username}} </dd>
+
+                        <dt>Password:</dt>
+                        <dd>{{password}}</dd>
+
+                        <dt>Google ID:</dt>
+                        <dd>{{googleId}}</dd>
+
+                        <dt>Name:</dt>
+                        <dd> {{usrFirst}} {{usrLast}} </dd>
+
+                        <dt>Email:</dt>
+                        <dd>{{usrEmail}}</dd>
+
+                        <dt>Occupation:</dt>
+                        <dd>{{usrOccupation}}</dd>
+
+                        <dt>Skills:</dt>
+                        <dd>{{usrSkills}}</dd>
+
+                        <dt>Access Token:</dt>
+                        <dd>{{usrAccessToken}}</dd>
+
+                        <dt>Refresh Token:</dt>
+                        <dd>{{usrRefreshToken}}</dd>
+                            
+                    </dl>
+                </p>
                 <h3>Social Links</h3>
                 <ul>
                     <li ng-repeat="Links in usrUrls" >{{Links}}</li>
