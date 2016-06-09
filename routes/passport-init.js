@@ -121,27 +121,7 @@ module.exports = function (passport) {
     },
         function (accessToken, refreshToken, profile, cb) {
 
-            var vStrProfile = JSON.stringify(profile);
-            
-            console.log("google: " + vStrProfile); // [DEBUG]
-            
-            Object.size = function(profile){
-                var size = 0, key;
-                for (key in profile){
-                  if (profile.hasOwnProperty(key)) {
-                      console.log(size + '. Key = ' + key); // DEBUG
-                      size++;
-                    };  
-                };
-                return size;
-            };
-            
-            var size = Object.size(profile);
-            
-            console.log("how large is objProfile = " + size);
-            
-
-            People.findOne({ 'googleId': profile.id }, function (err, user) {
+            People.findOne({ 'username': 'tre' }, function (err, user) {
 
                 // error check, return using the done method
                 if (err) {
@@ -153,14 +133,9 @@ module.exports = function (passport) {
                     console.log('User already exist with username: ' + user.username); // [DEBUG]
 
                     var upUser = new People(user);
-                    upUser.username = profile.displayName;
-                    upUser.usrName = profile.name; 
-                    upUser.usrFirst = profile.name.familyName;
-                    upUser.usrLast = profile.name.givenName;
+                    
                     upUser.usrEmail = profile.emails[0].value;
                     upUser.usrPhotos = profile.photos[0].value;
-                    upUser.usrGender = profile.gender;
-                    upUser.usrSocial = profile.provider;
                     upUser.usrOccupation = profile._json.occupation;
                     upUser.usrSkills = profile._json.skills;
                     
@@ -184,8 +159,7 @@ module.exports = function (passport) {
 
                     //set the user's local credentials
                     newUser.googleId = profile.id;
-                    newUser.username = profile.displayName;
-                    newUser.usrName = profile.name; 
+                    newUser.username = profile.username;
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
                     newUser.usrEmail = profile.emails[0].value;

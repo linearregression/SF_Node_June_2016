@@ -8,13 +8,13 @@ var app =
             });
 
         })
-        /*
-        .run(function ($rootScope) {
-            $rootScope.authenticate = false;
-            $rootScope.current_user = 'Guest';
-        })
-        */
-        ;
+    /*
+    .run(function ($rootScope) {
+        $rootScope.authenticate = false;
+        $rootScope.current_user = 'Guest';
+    })
+    */
+    ;
 
 app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
 
@@ -58,7 +58,7 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
                 /*
                 login response = {"data":{"_id":"574ce8ace7d9e86c0a2844a7","usrSocial":"local","usrLast":"Grisby III","usrFirst":"tre","usrEmail":"trewaters@hotmail.com","password":"$2a$10$Mg5TfKxZ6usZ50tb5MTU7OngjSqxBKRzxshLthbrOkBW9Q7Rru9Ze","username":"tre","__v":0},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"/auth/login","data":{"username":"tre","password":"tre"},"headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}},"statusText":"OK"}
                 */
-                
+
                 // this callback will be called asynchronously
                 // when the response is available
             }, function errorCallback(response) {
@@ -71,84 +71,73 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
 
 });
 
-app.controller('profCtrl', function ($scope, $http,$rootScope) {
-    
+app.controller('profCtrl', function ($scope, $http, $rootScope) {
+
     console.log('profCtrl Begin');//DEBUG
 
-    $http.get('/auth/loggedin').success(function (user) {
-        console.log('user = ' + JSON.stringify(user));
-            if (user !== '0') {
-                // Authenticated
+    $http({
+        method: 'GET'
+        , url: '/auth/loggedin'
+    }).then(function successCallback(response) {
+        if (response.data.user !== '0') {
+            // Authenticated
 
-                console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
-                
+            console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
+            console.log('loggedin response = ' + JSON.stringify(response)); //debug
 
-                $rootScope.authenticated = true;
-                $rootScope.current_user = user.username;
-                $rootScope.username = user.username;
-                $rootScope.password = user.password;
-                $rootScope.googleId = user.googleId;
-                $rootScope.usrFirst = user.usrFirst;
-                $rootScope.usrLast = user.usrLast;
-                $rootScope.usrEmail = user.usrEmail;
-                $rootScope.usrOccupation = user.usrOccupation;
-                $rootScope.usrSkills = user.usrSkills;
-                $rootScope.usrUrls = user.usrUrls;
-                $rootScope.usrAccessToken = user.usrAccessToken;
-                $rootScope.usrRefreshToken = user.usrRefreshToken;
+            $rootScope.authenticated = true;
+            $rootScope.current_user = response.data;
+            $rootScope.username = response.data;
 
-            } else {
-                // Not Authenticated
+        } else {
+            // Not Authenticated
 
-                console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
+            console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
 
-                $rootScope.authenticated = false;
-                $rootScope.current_user = 'Guest';
+            $rootScope.authenticated = false;
+            $rootScope.current_user = 'Guest';
 
-            }
+        }
+    }, function errorCallback(response) {
+
+    });
+
+    $scope.getUser = function getUser() {
+
+        $http({
+            method: 'GET'
+            , url: '/api/getUser'
+            , params: { 'username': $rootScope.current_user }
+        }).then(function successCallback(response) {
+
+            console.log('response = ' + JSON.stringify(response)); //debug
+            console.log('response.data.password = ' + response.data[0].password); //debug
+
+            $rootScope.authenticated = true;
+            //$rootScope.current_user = user.username;
+            $scope.username = response.data[0].username;
+            $scope.password = response.data[0].password;
+            $scope.googleId = response.data[0].googleId;
+            $scope.usrFirst = response.data[0].usrFirst;
+            $scope.usrLast = response.data[0].usrLast;
+            $scope.usrEmail = response.data[0].usrEmail;
+            $scope.usrOccupation = response.data[0].usrOccupation;
+            $scope.usrSkills = response.data[0].usrSkills;
+            $scope.usrUrls = response.data[0].usrUrls;
+            $scope.usrAccessToken = response.data[0].usrAccessToken;
+            $scope.usrRefreshToken = response.data[0].usrRefreshToken;
+
+        }, function errorCallback(response) {
+
         });
-/*
-    $scope.getUser = function () {
-        console.log('checkLoggedIn Begin');//DEBUG
 
-        // Make a call to check if th user is logged in
-        $http.get('/auth/loggedin').success(function (user) {
-            if (user !== '0') {
-                // Authenticated
-
-                console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
-
-                $rootScope.authenticated = true;
-                $rootScope.current_user = user.username;
-                $rootScope.username = user.username;
-                $rootScope.password = user.password;
-                $rootScope.googleId = user.googleId;
-                $rootScope.usrFirst = user.usrFirst;
-                $rootScope.usrLast = user.usrLast;
-                $rootScope.usrEmail = user.usrEmail;
-                $rootScope.usrOccupation = user.usrOccupation;
-                $rootScope.usrSkills = user.usrSkills;
-                $rootScope.usrUrls = user.usrUrls;
-                $rootScope.usrAccessToken = user.usrAccessToken;
-                $rootScope.usrRefreshToken = user.usrRefreshToken;
-
-            } else {
-                // Not Authenticated
-
-                console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
-
-                $rootScope.authenticated = false;
-                $rootScope.current_user = 'Guest';
-
-            }
-        });
     };
-    */
-    
+
+
 
 });
 
-app.controller('gCtrl', function ($q,$scope, $http, $rootScope) {
+app.controller('gCtrl', function ($q, $scope, $http, $rootScope) {
 
     console.log('gCtrl Begin');//DEBUG
 
@@ -174,7 +163,7 @@ app.controller('gCtrl', function ($q,$scope, $http, $rootScope) {
             }
         });
     };
-    
+
     $scope.GoogleEvents = function () {
         $http.get('/api/getCalendar');
     };

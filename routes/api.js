@@ -38,7 +38,16 @@ acl.isAllowed('username', 'events', 'view', function (err, res) { // node_acl
 });
 */
 
-router.route('/getCalendar')
-  .get(function (req, res) {});
+router.route('/getUser')
+  .get(function (req, res) {
+
+console.log('req.params' + JSON.stringify(req.params)); // DEBUG
+console.log('req.body' + JSON.stringify(req.body)); // DEBUG
+console.log('req.query' + JSON.stringify(req.query)); // DEBUG
+
+    People.find({"username":req.query.username},function(err,mongoUser){
+      return res.send(mongoUser);
+    });
+  });
 
 module.exports = router;

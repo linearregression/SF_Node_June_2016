@@ -52,16 +52,17 @@
 <body>
     
     <div ng-controller="profCtrl">
-        
-    </div>
-    
+
     <a href="/auth/logout" class="btn btn-default">Logout</a>
-    
-        <button class="btn btn-default" ng-click="$scope.getUser()">
+    <br><br>
+        <button class="btn btn-default" ng-click="getUser()">
     Get current_user
     </button>
-    
+    <br><br>
 <p>Logged in user: {{current_user}}</p>
+<p>
+            <a class="btn btn-default" href="/auth/google">Google</a>
+        </p>
 
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -185,6 +186,7 @@
     </div>
     <!-- /.container -->
     
+    </div>
 </body>
 
 </html>
