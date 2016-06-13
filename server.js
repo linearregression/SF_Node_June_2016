@@ -6,9 +6,10 @@ app_express.use(express.static(__dirname + '/public')); //express
 var passport = require('passport'); // passport
 var authenticate = require('./routes/authenticate')(passport); // passport
 var initPassport = require('./routes/passport-init')(passport); // passport
-var api = require('./routes/api'); 
+var api = require('./routes/api');
 
-//var db = require('./models/db'); // mongoose
+var mongoose = require('mongoose'); // mongoose
+var db = require('./models/db'); // mongoose
 
 // [NOTE] use fs for writing logs to file
 // var fs = require('fs'); // morgan
@@ -55,14 +56,35 @@ https notes:
 ( https://code.google.com/archive/p/openssl-for-windows/downloads ) download openssl from google
 ( http://www.c-sharpcorner.com/UploadFile/82b980/creating-https-server-with-nodejs/ ) this worked!!!
 - ( C:\Users\Tre'\openssl-0.9.8k_X64\bin ) my location to generate keys
-
 */
+
+var Acl = require('acl'); // node_acl
+
+var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
+
+//node_acl
+//Adds the given permissions to the given roles over the given resources.
+acl.allow([
+    {
+        roles: ['guest', 'guest']
+        , allows: [
+            { resources: 'profile', permissions: 'get' }
+            , { resources: 'updateUser', permissions: 'get' }
+        ]
+    }
+], function (err) {
+    if (err) { console.log('save error, ' + err); }
+
+    console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
+
+});
+
 var https = require('https');
 var fs = require('fs');
 
 var options = {
-  key: fs.readFileSync('keys/hostkey.pem'),
-  cert: fs.readFileSync('keys/hostcert.pem')
+    key: fs.readFileSync('keys/hostkey.pem'),
+    cert: fs.readFileSync('keys/hostcert.pem')
 };
 
 https.createServer(options, app_express).listen(443); // passport

@@ -10,6 +10,8 @@ var LocalStrategy = require('passport-local').Strategy; // passport
 // Google Strategy
 var GoogleStrategy = require('passport-google-oauth20').Strategy; // passport
 
+var http = require('http'); // passport
+
 // password encryption 
 var bCrypt = require('bcrypt'); // bcrypt
 var saltRounds = 10; // bcrypt
@@ -93,20 +95,28 @@ module.exports = function (passport) {
                     newUser.save(function (err) {
 
                         if (err) {
-                            console.log('Error saving user: ' + err);
+                            console.log('Error saving user: ' + err); // DEBUG
                             throw err;
                         };
 
-                        var Acl = require('acl'); // node_acl
+                         var Acl = require('acl'); // node_acl
 
                         var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
-
-                        acl.allow(username, 'events', ['edit', 'view', 'delete'], function (err) {
+                       
+                       //node_acl
+                        //Adds the given permissions to the given roles over the given resources.
+                         acl.allow(newUser.username,newUser.username,'edit', function (err) {
                             if (err) { console.log('save error, ' + err); }
-                            console.log('acl allowed'); // DEBUG
-                        }); //node_acl
 
-                        acl.addUserRoles(username, 'member'); //node_acl
+                            console.log('acl local \'profile\' allow edit created' + '\n'); // DEBUG
+
+                        });
+
+                        //Adds roles to a given user id.
+                        // [NOTES] Roles - 'owner'
+                        // [NOTES] User id -
+                        // [NOTES] addUserRoles( userId, roles, function(err) )
+                        acl.addUserRoles(newUser.username, newUser.username); //node_acl
 
                     });
                     return done(null, newUser);
@@ -121,28 +131,37 @@ module.exports = function (passport) {
     },
         function (accessToken, refreshToken, profile, cb) {
 
-            People.findOne({ 'username': 'tre' }, function (err, user) {
+            console.log('profile = ' + JSON.stringify(profile)); // DEBUG
+
+            People.findOne({ 'username': profile.displayName }, function (err, user) {
 
                 // error check, return using the done method
                 if (err) {
+
                     console.log('Error in sign up: ' + err); // [DEBUG]
+
                     return cb(err);
-                }
+                };
+
                 //already exist
                 if (user) {
-                    console.log('User already exist with username: ' + user.username); // [DEBUG]
+                    console.log('User already exist with username: ' + user.username + '\n'); // [DEBUG]
 
                     var upUser = new People(user);
-                    
+
+                    upUser.googleId = profile.id;
+                    upUser.username = user.username;
                     upUser.usrEmail = profile.emails[0].value;
                     upUser.usrPhotos = profile.photos[0].value;
                     upUser.usrOccupation = profile._json.occupation;
                     upUser.usrSkills = profile._json.skills;
-                    
-                    for(var vUrls = 0; vUrls<profile._json.urls.length;vUrls++){
+
+                    for (var vUrls = 0; vUrls < profile._json.urls.length; vUrls++) {
                         upUser.usrUrls[vUrls] = profile._json.urls[vUrls].value;
                     };
-                    
+
+                    upUser.usrHome = profile._json.url;
+                    upUser.usrCover = profile._json.cover.coverPhoto.url;
                     upUser.usrAccessToken = accessToken;
                     upUser.usrRefreshToken = refreshToken;
 
@@ -159,7 +178,8 @@ module.exports = function (passport) {
 
                     //set the user's local credentials
                     newUser.googleId = profile.id;
-                    newUser.username = profile.username;
+                    newUser.username = profile.name.givenName + ' ' + profile.name.familyName;
+                    //newUser.password = 'tre';
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
                     newUser.usrEmail = profile.emails[0].value;
@@ -168,11 +188,13 @@ module.exports = function (passport) {
                     newUser.usrSocial = profile.provider;
                     newUser.usrOccupation = profile._json.occupation;
                     newUser.usrSkills = profile._json.skills;
-                    
-                    for(var vUrls = 0; vUrls<profile._json.urls.length;vUrls++){
+
+                    for (var vUrls = 0; vUrls < profile._json.urls.length; vUrls++) {
                         newUser.usrUrls[vUrls] = profile._json.urls[vUrls].value;
                     };
-                    
+
+                    newUser.usrHome = profile._json.url;
+                    newUser.usrCover = profile._json.cover.coverPhoto.url;
                     newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
                     newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
 
@@ -182,13 +204,42 @@ module.exports = function (passport) {
                             console.log('Error saving user: ' + err);
                             throw err;
                         }
-                        console.log(newUser.username + ' Registration successful');
+                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
                     });
+
+                    newUser.save(function (err) {
+
+                        if (err) {
+                            console.log('Error saving user: ' + err);
+                            throw err;
+                        };
+
+                        var Acl = require('acl'); // node_acl
+
+                        var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
+                       
+                       //node_acl
+                        //Adds the given permissions to the given roles over the given resources.
+                         acl.allow(newUser.username,newUser.username,'edit', function (err) {
+                            if (err) { console.log('save error, ' + err); }
+
+                            console.log('acl google \'profile\' allow edit created' + '\n'); // DEBUG
+
+                        });
+
+                        //Adds roles to a given user id.
+                        // [NOTES] Roles - 'owner'
+                        // [NOTES] User id -
+                        // [NOTES] addUserRoles( userId, roles, function(err) )
+                        acl.addUserRoles(newUser.username, newUser.username); //node_acl
+
+                    });
+
                     return cb(null, user);
                 }
 
             });
 
         }));
-  
+
 };

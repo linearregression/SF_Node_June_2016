@@ -43,7 +43,8 @@ module.exports = function (passport) {
             failureRedirect: 'http://localhost:3000/index.html' // NOTE - redirect to Failed Login page
         }),
         function (req, res) {
-            res.redirect('http://localhost:3000/profile.html');
+            //console.log('req.session = ' + JSON.stringify(req.session)); // DEBUG
+            res.redirect('http://localhost:3000/profile.html?username=' + req.session.passport.user);
         });
 
     return router;

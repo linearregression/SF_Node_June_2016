@@ -13,9 +13,10 @@
     <!-- Angular CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.js"></script>
 
     <!-- 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.js"></script>
+    
     -->
 
     <script src="/javascript/sfNodeApp.js"></script>
@@ -51,39 +52,84 @@
 
 <body ng-controller="loginCtrl">
 
-
-    <div class="col-xs-12 col-sm-6 col-md-8">
-        <form ng-submit="login()">
-            <div>
-                <label>Username:</label>
-                <input type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/index.html">SF Node App Profile</a>
             </div>
-
-            <div>
-                <label>Password:</label>
-                <input type="password" ng-model="password" class="form-control" ng-model="password" min="11" max="128" title="Input password (max length 128 characters)">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">                    
+                    <li>
+                        <a href="/auth/google">Google Login</a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:3000/signup.html">Register</a>
+                    </li>
+                </ul>
             </div>
-            <div>
-                <input type="submit" value="Log In">
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <br>
+        <!-- Portfolio Item Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Login with password
+                </h1>
             </div>
-        </form>
+        </div>
+        <!-- /.row -->
 
-        <p>Login or Register with:</p>
+        <!-- Portfolio Item Row -->
+        <div class="row">
+            <div class="col-md-8">
+                <form ng-submit="login()">
+                    <div>
+                        <label>Username:</label>
+                        <input type="text" ng-model="username" class="form-control" min="1" max="32" title="Input username (max length 32 characters)">
+                    </div>
 
-        <p>
-            <a class="btn btn-default" href="/auth/google">Google</a>
-        </p>
-        
-        </p>
-            <a class="btn btn-default" href="http://localhost:3000/signup.html">Register</a>
-        </p>
+                    <div>
+                        <label>Password:</label>
+                        <input type="password" ng-model="password" class="form-control" ng-model="password" min="11" max="128" title="Input password (max length 128 characters)">
+                    </div>
+                    <div>
+                        <input type="submit" value="Local Log In">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <!-- /.row -->
+
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; 3Waters 2016</p>
+                </div>
+            </div>
+            <!-- /.row -->
+        </footer>
 
     </div>
-
-
-    <a href="/auth/logout" class="btn btn-default">Logout</a>
-    <p>Logged in user: {{current_user}}</p>
-
+    <!-- /.container -->
 </body>
 
 </html>

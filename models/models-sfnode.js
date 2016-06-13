@@ -1,30 +1,19 @@
 var mongoose = require('mongoose');
 
-/*
-var meetupEventSchema = new mongoose.Schema({
-    // [TO DO] I need to know what data will be used so I can add it to the schema
-    // [NOTE] meetup API documentation ( https://secure.meetup.com/meetup_api )
-    title: { type: String, trim: true }
-});
-
-var googleEventSchema = new mongoose.Schema({
-    // [TO DO] I need to know what data will be used so I can add it to the schema
-    title: { type: String, trim: true }
-});
-*/
-
 var peopleSchema = new mongoose.Schema({
-    username: { type: String, trim: true }
+    username: { type: String, trim: true, required: [true, 'You must have a username!'] }
     , password: { type: String, trim: true }
     , googleId: { type: String, trim: true }
     , usrFirst: { type: String, trim: true }
     , usrLast: { type: String, trim: true }
     , usrEmail: { type: String, trim: true }
-    , usrPhotos: { type: String, trim: true}
-    , usrGender: {type: String, trim:true}
-    , usrOccupation: {type: String, trim:true}
-    , usrSkills: {type:String, trim:true}
-    , usrUrls: [String] // NOTE - look into this type ( http://mongoosejs.com/docs/schematypes.html )
+    , usrPhotos: { type: String, trim: true }
+    , usrGender: { type: String, trim: true }
+    , usrOccupation: { type: String, trim: true }
+    , usrSkills: { type: String, trim: true }
+    , usrUrls: [String]
+    , usrCover: { type: String, trim: true }
+    , usrHome: { type: String, trim: true }
     , usrAccessToken: { type: String, trim: true }
     , usrRefreshToken: { type: String, trim: true }
     /*
@@ -32,16 +21,10 @@ var peopleSchema = new mongoose.Schema({
     , usrCreatedDate:{ type:Date, default:Date.now}
     , usrLastLogin:{type:Date}
     */
-    
+
     , usrSocial: { type: String, trim: true }
 });
 
 var People = mongoose.model('People', peopleSchema);
-
-/*
-mongoose.model('MeetupEvent', meetupEventSchema);
-mongoose.model('GoogleEvent', googleEventSchema);
-
-*/
 
 module.exports = People;

@@ -15,10 +15,7 @@
     <!-- Angular CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
-
-    <!-- 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.js"></script>
-    -->
 
     <script src="/javascript/sfNodeApp.js"></script>
 
@@ -58,11 +55,7 @@
         <button class="btn btn-default" ng-click="getUser()">
     Get current_user
     </button>
-    <br><br>
-<p>Logged in user: {{current_user}}</p>
-<p>
-            <a class="btn btn-default" href="/auth/google">Google</a>
-        </p>
+    <br>
 
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -81,10 +74,10 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="/index.html">Login</a>
+                        <a href="/index.html">{{'Logged in as ' + current_user}}</a>
                     </li>
                     <li>
-                        <a href="/profile.html">Profile</a>
+                        <a href="/auth/google">Google Login</a>
                     </li>
                 </ul>
             </div>
@@ -110,32 +103,32 @@
         <div class="row">
 
             <div class="col-md-8">
-                <img class="img-responsive" src="" alt="{{username}}'s Picture">
+                <img class="img-responsive" src="{{usrCover}}" alt="{{username}}'s Picture">
             </div>
 
             <div class="col-md-4">
                 <h3>User Profile</h3>
                 <p>
-                    <dl>
+                    <dl class="dl-horizontal">
                         <dt>User:</dt>
                         <dd>{{username}} </dd>
 
                         <dt>Password:</dt>
                         <dd>{{password}}</dd>
 
-                        <dt>Google ID:</dt>
-                        <dd>{{googleId}}</dd>
-
                         <dt>Name:</dt>
                         <dd> {{usrFirst}} {{usrLast}} </dd>
 
-                        <dt>Email:</dt>
+                        <dt>Email: UPDATE</dt>
                         <dd>{{usrEmail}}</dd>
 
-                        <dt>Occupation:</dt>
+                        <dt>Google ID:</dt>
+                        <dd>{{googleId}}</dd>
+
+                        <dt>Occupation: UPDATE</dt>
                         <dd>{{usrOccupation}}</dd>
 
-                        <dt>Skills:</dt>
+                        <dt>Skills: UPDATE</dt>
                         <dd>{{usrSkills}}</dd>
 
                         <dt>Access Token:</dt>
@@ -148,7 +141,7 @@
                 </p>
                 <h3>Social Links</h3>
                 <ul>
-                    <li ng-repeat="Links in usrUrls" >{{Links}}</li>
+                    <li ng-repeat="Links in usrUrls" ><a href="{{Links}}" target="_blank">{{Links}}</a></li>
                 </ul>
             </div>
 
@@ -163,8 +156,8 @@
             </div>
 
             <div class="col-sm-3 col-xs-6">
-                <a href="#">
-                    <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
+                <a href="{{usrHome}}">
+                    <img class="img-responsive portfolio-item" src="{{usrPhotos}}" alt="">
                 </a>
             </div>
 

@@ -1,5 +1,5 @@
 var app =
-    angular.module('sna', ['ngRoute'])
+    angular.module('sna', ['ngRoute', 'ngResource'])
         .config(function ($locationProvider) {
 
             $locationProvider.html5Mode({
@@ -16,10 +16,12 @@ var app =
     */
     ;
 
+app.factory('profile', function ($resource) {
+    return $resource('/updateUser/:id', { 'id': '@username' }, { 'update': { method: 'PUT' } });
+});
+
 app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
-
     $scope.register = function () {
-
         $http({
             method: 'POST',
             url: '/auth/signup',
@@ -71,36 +73,40 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
 
 });
 
-app.controller('profCtrl', function ($scope, $http, $rootScope) {
+app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $location) {
 
-    console.log('profCtrl Begin');//DEBUG
+    /*
+    if ($location.search.username != '') { $rootScope.current_user = $location.search().username };
+    console.log('location.search = ' + $location.search().username); //DEBUG
+    */
 
-    $http({
-        method: 'GET'
-        , url: '/auth/loggedin'
-    }).then(function successCallback(response) {
-        if (response.data.user !== '0') {
-            // Authenticated
+$http({
+            method: 'GET'
+            , url: '/auth/loggedin'
+        }).then(function successCallback(response) {
+            if (response.data.user !== '0') {
+                // Authenticated
 
-            console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
-            console.log('loggedin response = ' + JSON.stringify(response)); //debug
+                console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
+                console.log('loggedin response = ' + JSON.stringify(response)); //debug
 
-            $rootScope.authenticated = true;
-            $rootScope.current_user = response.data;
-            $rootScope.username = response.data;
+                $rootScope.authenticated = true;
+                $rootScope.current_user = response.data;
+                $scope.username = response.data;
 
-        } else {
-            // Not Authenticated
 
-            console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
+            } else {
+                // Not Authenticated
 
-            $rootScope.authenticated = false;
-            $rootScope.current_user = 'Guest';
+                console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
 
-        }
-    }, function errorCallback(response) {
+                $rootScope.authenticated = false;
+                $rootScope.current_user = 'Guest';
 
-    });
+            }
+        }, function errorCallback(response) {
+            // error
+        });
 
     $scope.getUser = function getUser() {
 
@@ -111,10 +117,8 @@ app.controller('profCtrl', function ($scope, $http, $rootScope) {
         }).then(function successCallback(response) {
 
             console.log('response = ' + JSON.stringify(response)); //debug
-            console.log('response.data.password = ' + response.data[0].password); //debug
 
             $rootScope.authenticated = true;
-            //$rootScope.current_user = user.username;
             $scope.username = response.data[0].username;
             $scope.password = response.data[0].password;
             $scope.googleId = response.data[0].googleId;
@@ -124,48 +128,18 @@ app.controller('profCtrl', function ($scope, $http, $rootScope) {
             $scope.usrOccupation = response.data[0].usrOccupation;
             $scope.usrSkills = response.data[0].usrSkills;
             $scope.usrUrls = response.data[0].usrUrls;
+            $scope.usrPhotos = response.data[0].usrPhotos;
+            $scope.usrCover = response.data[0].usrCover;
+            $scope.usrHome = response.data[0].usrHome;
             $scope.usrAccessToken = response.data[0].usrAccessToken;
             $scope.usrRefreshToken = response.data[0].usrRefreshToken;
 
         }, function errorCallback(response) {
-
-        });
-
-    };
-
-
-
-});
-
-app.controller('gCtrl', function ($q, $scope, $http, $rootScope) {
-
-    console.log('gCtrl Begin');//DEBUG
-
-    $scope.getUser = function () {
-        console.log('checkLoggedIn Begin');//DEBUG
-
-        // Make a call to check if th user is logged in
-        $http.get('/auth/loggedin').success(function (user) {
-            if (user !== '0') {
-                // Authenticated
-
-                $rootScope.authenticated = true;
-                $rootScope.current_user = user.username;
-
-            } else {
-                // Not Authenticated
-
-                console.log('DEV NOTE -> $rootScope.error_message /auth/loggedin'); // [DEBUG]
-
-                $rootScope.authenticated = false;
-                $rootScope.current_user = 'Guest';
-
-            }
+            //error
         });
     };
 
-    $scope.GoogleEvents = function () {
-        $http.get('/api/getCalendar');
+    $scope.updateUser = function updateUser(email, occupation, skills) {
+        profile.update({ 'id': $rootScope.current_user }, { 'usrEmail': email, 'usrOccupation': occupation, 'usrSkills': skills })
     };
-
 });
