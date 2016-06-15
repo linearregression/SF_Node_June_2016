@@ -99,13 +99,33 @@ module.exports = function (passport) {
                             throw err;
                         };
 
-                         var Acl = require('acl'); // node_acl
+                        var Acl = require('acl'); // node_acl
 
                         var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
-                       
-                       //node_acl
+
+/*
+                        //node_acl
                         //Adds the given permissions to the given roles over the given resources.
-                         acl.allow(newUser.username,newUser.username,'edit', function (err) {
+                        acl.allow([
+                            {
+                                roles: ['guest', 'guest']
+                                , allows: [
+                                    { resources: 'profile', permissions: 'get' }
+                                    , { resources: 'updateUser', permissions: 'get' }
+                                ]
+                            }
+                        ], function (err) {
+                            if (err) { console.log('save error, ' + err); }
+
+                            console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
+
+                        });
+*/
+
+                        //node_acl
+                        //Adds the given permissions to the given roles over the given resources.
+                        // [NOTES] allow( roles, resources, permissions, function(err) )
+                        acl.allow(newUser.username, newUser.username, 'edit', function (err) {
                             if (err) { console.log('save error, ' + err); }
 
                             console.log('acl local \'profile\' allow edit created' + '\n'); // DEBUG
@@ -116,7 +136,12 @@ module.exports = function (passport) {
                         // [NOTES] Roles - 'owner'
                         // [NOTES] User id -
                         // [NOTES] addUserRoles( userId, roles, function(err) )
-                        acl.addUserRoles(newUser.username, newUser.username); //node_acl
+                        acl.addUserRoles(newUser.username, newUser.username, function (err) {
+                            if (err) { console.log('save error, ' + err); }
+
+                            console.log('acl local \'profile\' addUser Roles' + '\n'); // DEBUG
+
+                        }); //node_acl
 
                     });
                     return done(null, newUser);
@@ -217,10 +242,10 @@ module.exports = function (passport) {
                         var Acl = require('acl'); // node_acl
 
                         var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
-                       
-                       //node_acl
+
+                        //node_acl
                         //Adds the given permissions to the given roles over the given resources.
-                         acl.allow(newUser.username,newUser.username,'edit', function (err) {
+                        acl.allow(newUser.username, newUser.username, 'edit', function (err) {
                             if (err) { console.log('save error, ' + err); }
 
                             console.log('acl google \'profile\' allow edit created' + '\n'); // DEBUG
@@ -232,6 +257,7 @@ module.exports = function (passport) {
                         // [NOTES] User id -
                         // [NOTES] addUserRoles( userId, roles, function(err) )
                         acl.addUserRoles(newUser.username, newUser.username); //node_acl
+                        acl.addUserRoles(newUser.username, 'guest'); // node_acl
 
                     });
 

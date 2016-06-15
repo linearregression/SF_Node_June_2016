@@ -58,6 +58,7 @@ https notes:
 - ( C:\Users\Tre'\openssl-0.9.8k_X64\bin ) my location to generate keys
 */
 
+/*
 var Acl = require('acl'); // node_acl
 
 var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
@@ -78,6 +79,7 @@ acl.allow([
     console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
 
 });
+*/
 
 var https = require('https');
 var fs = require('fs');

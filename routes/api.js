@@ -22,12 +22,12 @@ router.use('/updateUser/:id', isAuthenticated); // passport
 */
 
 // passport
-var isAuthenticated = function (req, res, next) { 
+var isAuthenticated = function (req, res, next) {
 
   console.log('begin isAuthenticated'); // DEBUG
 
   if (req.isAuthenticated()) {
-    
+
     return next();
   }
   res.sendStatus(401);
@@ -36,11 +36,46 @@ var isAuthenticated = function (req, res, next) {
 //router.use('/getUser', isAuthenticated); // passport
 router.use('/updateUser/:id', isAuthenticated); // passport
 
+//router.use('/getUser', acl.middleware());
+
 var Acl = require('acl'); // node_acl
 
-var acl = new Acl(new Acl.mongodbBackend(mongoose.createConnection('mongodb://localhost/sfnode2016'), 'acl_', true)); // node_acl and a multiple connection to mongodb
+var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
 
-//router.use('/getUser', acl.middleware());
+/*
+router.get('/getUser', function (req, res) {
+
+  console.log('getUser begins'); // debug
+
+  console.log('getUser req.query.username ' + req.query.username); // debug
+
+  //userRoles( userId, function(err, roles) )
+  acl.userRoles(req.query.username, function (err, roles) {
+    console.log('roles = ' + roles);
+  });
+
+  //isAllowed( userId, resource, permissions, function(err, allowed) )
+  acl.isAllowed(req.query.username, req.query.username, 'GET', function (err, allowed) {
+
+    console.log('acl.isAllowed begins' + allowed); // debug
+
+    if (err) {
+      return res.send(500, err);
+    };
+
+    //console.log('acl.isAllowed' + allowed); // debug
+
+    if (!allowed) {
+      return res.sendStatus(401);
+    };
+
+    People.find({ "username": req.query.username }, function (err, mongoUser) {
+      return res.send(mongoUser);
+    });
+
+  });
+});
+*/
 
 router.route('/getUser')
   .get(function (req, res) {
@@ -49,47 +84,83 @@ router.route('/getUser')
     acl.middleware(1, req.session.userId, 'get', function (err, res) {
       
       console.log('begin acl.middleware'); // DEBUG
-
+ 
       if (res) {
-
+ 
         console.log('getUser allowed'); // DEBUG
-
+ 
         return next();
       } else {
-
+ 
         console.log('getUser not allowed'); // DEBUG
-
+ 
         return res.end();
       }
     });
 */
 
+  console.log('getUser begins'); // debug
+
+  console.log('getUser req.query.username ' + req.query.username); // debug
+
+  //userRoles( userId, function(err, roles) )
+  acl.userRoles(req.query.username, function (err, roles) {
+    console.log('roles = ' + roles);
+  });
+
+  //isAllowed( userId, resource, permissions, function(err, allowed) )
+  acl.isAllowed(req.query.username, req.query.username, 'edit', function (err, allowed) {
+
+    console.log('acl.isAllowed begins, allowed = ' + allowed); // debug
+
+    if (err) {
+      return res.send(500, err);
+    };
+
+    if (!allowed) {
+      return res.sendStatus(401);
+    };
+
     People.find({ "username": req.query.username }, function (err, mongoUser) {
       return res.send(mongoUser);
     });
-
+  });
   });
 
 //modify profile data
 router.route('/updateUser/:id')
   .put(function (req, res) {
 
-    acl.middleware(2, req.session.userId, 'put', function (err, res) {
-      
-      console.log('begin acl.middleware'); // DEBUG
+    acl.isAllowed(req.query.username, req.query.id, 'owner', function (err, allowed) {
+      if (err) {
+        return res.send(500, err);
+      }
 
-      if (res) {
+      console.log('acl.isAllowed' + allowed); // debug
 
-        console.log('user allowed to update'); // DEBUG
-
-        return next();
-      } else {
-
-        console.log('no updates allowed'); // DEBUG
-
-        return res.end();
+      if (!allowed) {
+        return res.sendStatus(401);
       }
     });
+
+    /*
+        acl.middleware(2, req.session.userId, 'put', function (err, res) {
+          
+          console.log('begin acl.middleware'); // DEBUG
+    
+          if (res) {
+    
+            console.log('user allowed to update'); // DEBUG
+    
+            return next();
+          } else {
+    
+            console.log('no updates allowed'); // DEBUG
+    
+            return res.end();
+          }
+        });
+        */
 
     console.log('updateUser req.params = ' + JSON.stringify(req.params)); // DEBUG
 
