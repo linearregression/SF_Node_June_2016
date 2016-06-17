@@ -133,6 +133,14 @@ $http({
             $scope.usrHome = response.data[0].usrHome;
             $scope.usrAccessToken = response.data[0].usrAccessToken;
             $scope.usrRefreshToken = response.data[0].usrRefreshToken;
+            
+            console.log('response.data[0].timeFrom = '+response.data[0].timeFrom); // debug
+            
+            $scope.timeFrom = response.data[0].timeFrom;
+            $scope.timeTo = response.data[0].timeTo;
+            $scope.tzOffset1 = response.data[0].tzOffset1;
+            $scope.tzOffset2 = response.data[0].tzOffset2;
+            $scope.tzOffset3 = response.data[0].tzOffset3;
 
         }, function errorCallback(response) {
             //error

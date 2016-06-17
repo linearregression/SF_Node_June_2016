@@ -40,11 +40,13 @@ module.exports = function (passport) {
     // passport
     router.get('/google/oauth2callback',
         passport.authenticate('google', {
-            failureRedirect: 'http://localhost:3000/index.html' // NOTE - redirect to Failed Login page
+            //failureRedirect: 'http://localhost:3000/index.html' // NOTE - redirect to Failed Login page
+            failureRedirect: 'http://localhost:3000/profile.html' // NOTE - redirect to Failed Login page
         }),
         function (req, res) {
-            //console.log('req.session = ' + JSON.stringify(req.session)); // DEBUG
-            res.redirect('http://localhost:3000/profile.html?username=' + req.session.passport.user);
+            console.log('google callback req.session = ' + JSON.stringify(req.session.passport.user)); // DEBUG
+            //res.redirect('http://localhost:3000/profile.html?username=' + req.session.passport.user);
+            res.redirect('http://localhost:3000/profile.html');
         });
 
     return router;

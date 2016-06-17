@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'); // mongoose
 var db = require('../models/db'); // mongoose
+var moment = require('moment'); // Moment
 
 // models
 var People = require('../models/models-sfnode'); // mongoose
@@ -76,7 +77,20 @@ module.exports = function (passport) {
                 }
                 if (user) {
                     //console.log('User already exist with username: ' + username); // [DEBUG]
+
+                    var upUser = new People();
+
+                    upUser.usrLastLogin = moment(); // Moment
+
+                    upUser.save(function(err){
+                        if(err){
+                            throw err;
+                        };
+                        console.log('local usrLastLogin updated' + '\n'); // [DEBUG]
+                    });
+
                     return done(null, false);
+
                 } else {
                     // if there is no user, create the user
                     var newUser = new People();
@@ -103,15 +117,16 @@ module.exports = function (passport) {
 
                         var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
 
-/*
                         //node_acl
                         //Adds the given permissions to the given roles over the given resources.
+                        // [NOTES] allow( roles, resources, permissions, function(err) )
                         acl.allow([
                             {
-                                roles: ['guest', 'guest']
+                                roles: ['guest', 'guest', newUser.username]
                                 , allows: [
-                                    { resources: 'profile', permissions: 'get' }
+                                    { resources: 'getUser', permissions: 'get' }
                                     , { resources: 'updateUser', permissions: 'get' }
+                                    , { resources: newUser.username, permissions: 'edit' }
                                 ]
                             }
                         ], function (err) {
@@ -120,28 +135,27 @@ module.exports = function (passport) {
                             console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
 
                         });
-*/
-
+                        /*
                         //node_acl
                         //Adds the given permissions to the given roles over the given resources.
                         // [NOTES] allow( roles, resources, permissions, function(err) )
                         acl.allow(newUser.username, newUser.username, 'edit', function (err) {
-                            if (err) { console.log('save error, ' + err); }
+                                                    if (err) { console.log('save error, ' + err); }
+                        
+                                                    console.log('acl local \'profile\' allow edit created' + '\n'); // DEBUG
+                        
+                         });
+                        */
 
-                            console.log('acl local \'profile\' allow edit created' + '\n'); // DEBUG
-
-                        });
-
-                        //Adds roles to a given user id.
-                        // [NOTES] Roles - 'owner'
-                        // [NOTES] User id -
+                         //node_acl
+                         //Adds roles to a given user id.
                         // [NOTES] addUserRoles( userId, roles, function(err) )
-                        acl.addUserRoles(newUser.username, newUser.username, function (err) {
+                        acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
                             console.log('acl local \'profile\' addUser Roles' + '\n'); // DEBUG
 
-                        }); //node_acl
+                        });
 
                     });
                     return done(null, newUser);
@@ -156,7 +170,7 @@ module.exports = function (passport) {
     },
         function (accessToken, refreshToken, profile, cb) {
 
-            console.log('profile = ' + JSON.stringify(profile)); // DEBUG
+            //console.log('profile = ' + JSON.stringify(profile)); // DEBUG
 
             People.findOne({ 'username': profile.displayName }, function (err, user) {
 
@@ -189,15 +203,18 @@ module.exports = function (passport) {
                     upUser.usrCover = profile._json.cover.coverPhoto.url;
                     upUser.usrAccessToken = accessToken;
                     upUser.usrRefreshToken = refreshToken;
+                    upUser.usrLastLogin = moment(); // Moment
 
                     upUser.save(function (err) {
                         if (err) {
-                            console.log('Error saving user: ' + err);
+                            console.log('Error saving user: ' + err); // [DEBUG]
                             throw err;
-                        }
-                        console.log('Tokens updated' + '\n');
+                        };
+                        console.log('Tokens updated' + '\n'); // [DEBUG]
                     });
-                    return cb(err, user);
+
+                    return cb(null, user);
+
                 } else {// if there is no user, create the user
                     var newUser = new People();
 
@@ -229,15 +246,6 @@ module.exports = function (passport) {
                             console.log('Error saving user: ' + err);
                             throw err;
                         }
-                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
-                    });
-
-                    newUser.save(function (err) {
-
-                        if (err) {
-                            console.log('Error saving user: ' + err);
-                            throw err;
-                        };
 
                         var Acl = require('acl'); // node_acl
 
@@ -245,24 +253,41 @@ module.exports = function (passport) {
 
                         //node_acl
                         //Adds the given permissions to the given roles over the given resources.
-                        acl.allow(newUser.username, newUser.username, 'edit', function (err) {
+                        // [NOTES] allow( roles, resources, permissions, function(err) )
+                        acl.allow([
+                            {
+                                roles: ['guest', 'guest', newUser.username]
+                                , allows: [
+                                    { resources: 'getUser', permissions: 'get' }
+                                    , { resources: 'updateUser', permissions: 'get' }
+                                    , { resources: newUser.username, permissions: 'edit' }
+                                ]
+                            }
+                        ], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
-                            console.log('acl google \'profile\' allow edit created' + '\n'); // DEBUG
+                            console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
 
                         });
 
+                        //node_acl
                         //Adds roles to a given user id.
-                        // [NOTES] Roles - 'owner'
-                        // [NOTES] User id -
-                        // [NOTES] addUserRoles( userId, roles, function(err) )
-                        acl.addUserRoles(newUser.username, newUser.username); //node_acl
-                        acl.addUserRoles(newUser.username, 'guest'); // node_acl
+                       // [NOTES] addUserRoles( userId, roles, function(err) )
+                        acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
+                            if (err) { console.log('save error, ' + err); }
 
-                    });
+                            console.log('acl google addUserRoles created' + '\n'); // DEBUG
 
+                        }); 
+
+                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
+                        
+                });
+
+                    console.log('before google return' + '\n'); // [DEBUG]
                     return cb(null, user);
-                }
+
+                };
 
             });
 

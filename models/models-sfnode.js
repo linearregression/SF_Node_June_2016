@@ -16,11 +16,8 @@ var peopleSchema = new mongoose.Schema({
     , usrHome: { type: String, trim: true }
     , usrAccessToken: { type: String, trim: true }
     , usrRefreshToken: { type: String, trim: true }
-    /*
-    //add time with Moment
-    , usrCreatedDate:{ type:Date, default:Date.now}
-    , usrLastLogin:{type:Date}
-    */
+    , usrCreatedDate:{ type:Date, default:Date.now} // Moment
+    , usrLastLogin:{type:Date} // Moment
 
     , usrSocial: { type: String, trim: true }
 });

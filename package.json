@@ -28,6 +28,7 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "moment": "^2.13.0",
+    "moment-timezone": "^0.5.4",
     "mongoose": "^4.4.16",
     "morgan": "^1.7.0",
     "node-gyp": "^3.3.1",
