@@ -34,10 +34,15 @@ app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 
 var session = require('express-session');// passport
 var bodyParser = require('body-parser'); // passport
-var cookieParser = require('cookie-parser'); // passport
+
+/*
+cookie parser is no longer needed. But I need to configure express-session with a secret.
+READ DOCS here goto 'cookie options' ( https://www.npmjs.com/package/express-session )
+*/
+//var cookieParser = require('cookie-parser'); // passport 
 
 // Initialize Passport
-app_express.use(cookieParser());// passport
+//app_express.use(cookieParser());// passport
 app_express.use(bodyParser());// passport
 var config = require('./config-sfnode');// passport
 app_express.use(session({ secret: config.secret.phrase }));// passport
