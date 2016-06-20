@@ -1,6 +1,9 @@
 var express = require('express'); // express
 var app_express = express(); // express
 
+var helmet = require('helmet'); // helmet
+app_express.use(helmet());  // helmet
+
 app_express.use(express.static(__dirname + '/public')); //express
 
 var passport = require('passport'); // passport
@@ -32,7 +35,6 @@ app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 var session = require('express-session');// passport
 var bodyParser = require('body-parser'); // passport
 var cookieParser = require('cookie-parser'); // passport
-var session = require('express-session'); // passport
 
 // Initialize Passport
 app_express.use(cookieParser());// passport

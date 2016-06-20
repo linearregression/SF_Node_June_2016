@@ -1,20 +1,5 @@
 var app =
-    angular.module('sna', ['ngRoute', 'ngResource'])
-        .config(function ($locationProvider) {
-
-            $locationProvider.html5Mode({
-                enabled: true
-                , requireBase: false
-            });
-
-        })
-    /*
-    .run(function ($rootScope) {
-        $rootScope.authenticate = false;
-        $rootScope.current_user = 'Guest';
-    })
-    */
-    ;
+    angular.module('sna', ['ngRoute', 'ngResource']);
 
 app.factory('profile', function ($resource) {
     return $resource('/updateUser/:id', { 'id': '@username' }, { 'update': { method: 'PUT' } });
@@ -57,8 +42,28 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
                 //$rootScope._id = response.data._id;
                 $window.location.href = 'http://localhost:3000/profile.html';
 
-                /*
-                login response = {"data":{"_id":"574ce8ace7d9e86c0a2844a7","usrSocial":"local","usrLast":"Grisby III","usrFirst":"tre","usrEmail":"trewaters@hotmail.com","password":"$2a$10$Mg5TfKxZ6usZ50tb5MTU7OngjSqxBKRzxshLthbrOkBW9Q7Rru9Ze","username":"tre","__v":0},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"/auth/login","data":{"username":"tre","password":"tre"},"headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}},"statusText":"OK"}
+                /* [NOTE] - this is http header data before helmet was installed. It shows the password as plain text. I wonder what this looks like after helmet is installed.
+                login response = {
+                    "data":{
+                        "_id":"574ce8ace7d9e86c0a2844a7",
+                        "usrSocial":"local",
+                        "usrLast":"Grisby III",
+                        "usrFirst":"tre",
+                        "usrEmail":"trewaters@hotmail.com",
+                        "password":"$2a$10$Mg5TfKxZ6usZ50tb5MTU7OngjSqxBKRzxshLthbrOkBW9Q7Rru9Ze",
+                        "username":"tre",
+                        "__v":0
+                    },
+                    "status":200,
+                    "config":{
+                        "method":"POST",
+                    "transformRequest":[null],
+                    "transformResponse":[null],
+                    "url":"/auth/login",
+                    "data":{"username":"tre","password":"tre"},
+                    "headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}
+                },
+                "statusText":"OK"}
                 */
 
                 // this callback will be called asynchronously

@@ -12,6 +12,18 @@ var config = require('../config-sfnode');//passport
 //var moment = require('moment');
 var moment = require('moment-timezone'); // Moment
 
+// passport
+var isAuthenticated = function (req, res, next) { 
+
+  console.log('req.isAuthenticated() = ' + req.isAuthenticated()); // DEBUG
+  
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.sendStatus(401);
+};
+
+router.use('/getUser', isAuthenticated); // passport
 /*
 var isAuthenticated = function (req, res, next) { // passport
   if (req.isAuthenticated()) {
