@@ -64,7 +64,7 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
                     "headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}
                 },
                 "statusText":"OK"}
-                */
+                */                            
 
                 // this callback will be called asynchronously
                 // when the response is available

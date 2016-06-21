@@ -1,5 +1,5 @@
-var express = require('express');//express
-var router = express.Router();//express
+var express = require('express'); // express
+var router = express.Router(); // express
 
 var mongoose = require('mongoose'); // mongoose
 var db = require('../models/db'); // mongoose
@@ -7,9 +7,9 @@ var People = mongoose.model('People'); // mongoose
 
 var http = require('http');
 var https = require('https');
-var config = require('../config-sfnode');//passport
+var config = require('../config-sfnode'); // passport
 
-//var moment = require('moment');
+//var moment = require('moment'); // Moment
 var moment = require('moment-timezone'); // Moment
 
 // passport
@@ -24,31 +24,6 @@ var isAuthenticated = function (req, res, next) {
 };
 
 router.use('/getUser', isAuthenticated); // passport
-/*
-var isAuthenticated = function (req, res, next) { // passport
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.sendStatus(401);
-};
-
-router.use('/getUser', isAuthenticated); // passport
-router.use('/updateUser/:id', isAuthenticated); // passport
-*/
-
-// passport
-var isAuthenticated = function (req, res, next) {
-
-  console.log('begin isAuthenticated'); // DEBUG
-
-  if (req.isAuthenticated()) {
-
-    return next();
-  }
-  res.sendStatus(401);
-};
-
-//router.use('/getUser', isAuthenticated); // passport
 router.use('/updateUser/:id', isAuthenticated); // passport
 
 //router.use('/getUser', acl.middleware());
@@ -120,6 +95,7 @@ router.route('/getUser')
 
         newUser[0].tzOffset2 = moment.tz('2016-07-07 20:00:00',"America/Toronto").format('MMMM d, YYYY H:mm A Z'); // Moment
 
+/*
         console.log('newUser = ' + JSON.stringify(newUser)+"\n"); // debug
         console.log('newUser.timeFrom = ' + newUser[0].timeFrom+"\n"); // debug
         console.log('newUser.timeTo = ' + newUser[0].timeTo+"\n"); // debug
@@ -128,6 +104,7 @@ router.route('/getUser')
         console.log('timezone =' + moment.tz("May 12th 2014 8PM", "MMM Do YYYY hA", "America/Toronto")+"\n"); // debug
 
         console.log('newUser = ' + JSON.stringify(newUser)+"\n"); // debug
+*/
 
         return res.send(newUser);
       });

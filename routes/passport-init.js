@@ -82,8 +82,8 @@ module.exports = function (passport) {
 
                     upUser.usrLastLogin = moment(); // Moment
 
-                    upUser.save(function(err){
-                        if(err){
+                    upUser.save(function (err) {
+                        if (err) {
                             throw err;
                         };
                         console.log('local usrLastLogin updated' + '\n'); // [DEBUG]
@@ -107,7 +107,6 @@ module.exports = function (passport) {
                     newUser.usrSocial = 'local';
 
                     newUser.save(function (err) {
-
                         if (err) {
                             console.log('Error saving user: ' + err); // DEBUG
                             throw err;
@@ -147,8 +146,8 @@ module.exports = function (passport) {
                          });
                         */
 
-                         //node_acl
-                         //Adds roles to a given user id.
+                        //node_acl
+                        //Adds roles to a given user id.
                         // [NOTES] addUserRoles( userId, roles, function(err) )
                         acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
                             if (err) { console.log('save error, ' + err); }
@@ -156,7 +155,7 @@ module.exports = function (passport) {
                             console.log('acl local \'profile\' addUser Roles' + '\n'); // DEBUG
 
                         });
-
+                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
                     });
                     return done(null, newUser);
                 };
@@ -169,23 +168,10 @@ module.exports = function (passport) {
         callbackURL: config.google.GOOGLE_CALL_BACK_URL
     },
         function (accessToken, refreshToken, profile, cb) {
-
-            //console.log('profile = ' + JSON.stringify(profile)); // DEBUG
-
             People.findOne({ 'username': profile.displayName }, function (err, user) {
+                if (err) { return cb(err) };
 
-                // error check, return using the done method
-                if (err) {
-
-                    console.log('Error in sign up: ' + err); // [DEBUG]
-
-                    return cb(err);
-                };
-
-                //already exist
                 if (user) {
-                    console.log('User already exist with username: ' + user.username + '\n'); // [DEBUG]
-
                     var upUser = new People(user);
 
                     upUser.googleId = profile.id;
@@ -206,22 +192,16 @@ module.exports = function (passport) {
                     upUser.usrLastLogin = moment(); // Moment
 
                     upUser.save(function (err) {
-                        if (err) {
-                            console.log('Error saving user: ' + err); // [DEBUG]
-                            throw err;
-                        };
-                        console.log('Tokens updated' + '\n'); // [DEBUG]
+                        if (err) { throw err }
                     });
 
                     return cb(null, user);
 
-                } else {// if there is no user, create the user
+                } else {
                     var newUser = new People();
 
-                    //set the user's local credentials
                     newUser.googleId = profile.id;
                     newUser.username = profile.name.givenName + ' ' + profile.name.familyName;
-                    //newUser.password = 'tre';
                     newUser.usrFirst = profile.name.familyName;
                     newUser.usrLast = profile.name.givenName;
                     newUser.usrEmail = profile.emails[0].value;
@@ -240,12 +220,11 @@ module.exports = function (passport) {
                     newUser.usrAccessToken = accessToken; // [TO DO] - hash this data if possible, 11/14/2015
                     newUser.usrRefreshToken = refreshToken; // [TO DO] - hash this data if possible, 11/14/2015
 
-                    // save the user
                     newUser.save(function (err) {
                         if (err) {
                             console.log('Error saving user: ' + err);
                             throw err;
-                        }
+                        };
 
                         var Acl = require('acl'); // node_acl
 
@@ -268,25 +247,30 @@ module.exports = function (passport) {
 
                             console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
 
+                            console.log('before google return' + '\n'); // [DEBUG]
+                            return cb(null, user);
+
                         });
 
                         //node_acl
                         //Adds roles to a given user id.
-                       // [NOTES] addUserRoles( userId, roles, function(err) )
+                        // [NOTES] addUserRoles( userId, roles, function(err) )
                         acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
                             console.log('acl google addUserRoles created' + '\n'); // DEBUG
 
-                        }); 
+                        });
 
                         console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
-                        
-                });
 
-                    console.log('before google return' + '\n'); // [DEBUG]
+                    });
+
+                    console.log('after google oauth2callback return' + '\n'); // [DEBUG]
+                    /*
+                    
                     return cb(null, user);
-
+                    */
                 };
 
             });

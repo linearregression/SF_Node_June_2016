@@ -35,17 +35,12 @@ app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 var session = require('express-session');// passport
 var bodyParser = require('body-parser'); // passport
 
-/*
-cookie parser is no longer needed. But I need to configure express-session with a secret.
-READ DOCS here goto 'cookie options' ( https://www.npmjs.com/package/express-session )
-*/
-//var cookieParser = require('cookie-parser'); // passport 
-
-// Initialize Passport
-//app_express.use(cookieParser());// passport
-app_express.use(bodyParser());// passport
+app_express.use(bodyParser.urlencoded({
+    extended: true
+}));// passport
+app_express.use(bodyParser.json());// passport
 var config = require('./config-sfnode');// passport
-app_express.use(session({ secret: config.secret.phrase }));// passport
+app_express.use(session({ secret: config.secret.phrase, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true  }));// passport
 app_express.use(passport.initialize());// passport
 app_express.use(passport.session());// passport
 
@@ -97,7 +92,6 @@ var options = {
 };
 
 https.createServer(options, app_express).listen(443); // passport
-// http://www.meetup.com/meetup_api/auth/#oauth2
 
 var server = app_express.listen({
     host: 'localhost',
@@ -107,5 +101,5 @@ var server = app_express.listen({
     var vHost = server.address().address;
     var vIp = server.address().family;
 
-    console.log('listening on ' + vPort + ", as " + vIp + ", IP Address " + vHost);
+    console.log('Server listening on ' + vPort + ", as " + vIp + ", IP Address " + vHost);
 }); // express

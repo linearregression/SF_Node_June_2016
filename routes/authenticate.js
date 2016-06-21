@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express'); // express
+var router = express.Router(); // express
 
 module.exports = function (passport) {
 
@@ -24,7 +24,6 @@ module.exports = function (passport) {
         res.redirect('http://localhost:3000/index.html'); // NOTE - redirect to Logout page
     });
 
-/*
     // passport
     router.get('/loggedin', function (req, res) {
         
@@ -32,7 +31,6 @@ module.exports = function (passport) {
 
         res.send(req.isAuthenticated() ? req.user.username : '0');
     });
-*/
 
     // passport
     router.get('/google',
