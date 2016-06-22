@@ -162,7 +162,8 @@ module.exports = function (passport) {
             });
         }));
 
-    passport.use(new GoogleStrategy({ // passport
+    // passport
+    passport.use('google', new GoogleStrategy({ 
         clientID: config.google.GOOGLE_CLIENT_ID,
         clientSecret: config.google.GOOGLE_CLIENT_SECRET,
         callbackURL: config.google.GOOGLE_CALL_BACK_URL
@@ -248,7 +249,6 @@ module.exports = function (passport) {
                             console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
 
                             console.log('before google return' + '\n'); // [DEBUG]
-                            return cb(null, user);
 
                         });
 
@@ -263,14 +263,12 @@ module.exports = function (passport) {
                         });
 
                         console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
-
-                    });
+ 
+                });
 
                     console.log('after google oauth2callback return' + '\n'); // [DEBUG]
-                    /*
                     
-                    return cb(null, user);
-                    */
+                    return cb(null, newUser);
                 };
 
             });
