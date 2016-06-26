@@ -1,3 +1,4 @@
+
 var express = require('express'); // express
 var app_express = express(); // express
 
@@ -32,17 +33,35 @@ var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a
 app_express.use(morgan('common', {stream: accessLogStream})); // morgan
 */
 
-var session = require('express-session');// passport
-var bodyParser = require('body-parser'); // passport
+var config = require('./config-sfnode');// passport
+var session = require('express-session'); // passport, express-session
+app_express.set('trust proxy', 1); // express-session
+// passport, express-session
+app_express.use(session({ 
+    secret: config.secret.phrase
+    , name: 'sessionSfNodeId' // set session ID, more secure option
+    , cookie: { 
+        maxAge: 60000
+        , secure: true // https required
+        , httpOnly: true // send cookie over http(s), not client javascript
+        //domain: // domain of the cookie
+        //, path: // relative path of the cookie
+        //, expires: // set expiration date, not necessary due to maxAge
+    }
+    , resave: true
+    , saveUninitialized: true  
+}));
 
+var bodyParser = require('body-parser'); // passport
+// passport
 app_express.use(bodyParser.urlencoded({
     extended: true
-}));// passport
+}));
 app_express.use(bodyParser.json());// passport
-var config = require('./config-sfnode');// passport
-app_express.use(session({ secret: config.secret.phrase, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true  }));// passport
 app_express.use(passport.initialize());// passport
 app_express.use(passport.session());// passport
+
+
 
 app_express.use('/auth', authenticate); // passport
 app_express.use('/api', api); // passport

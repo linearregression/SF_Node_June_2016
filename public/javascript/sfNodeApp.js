@@ -64,7 +64,7 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
                     "headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}
                 },
                 "statusText":"OK"}
-                */                            
+                */
 
                 // this callback will be called asynchronously
                 // when the response is available
@@ -78,42 +78,54 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
 
 });
 
-app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $location) {
+app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $location, $routeParams, $window) {
 
     /*
-    if ($location.search.username != '') { $rootScope.current_user = $location.search().username };
-    console.log('location.search = ' + $location.search().username); //DEBUG
+    if ($location.search().username !== '') {
+                $rootScope.current_user = $location.search().username;
+                console.log('location.search = ' + $location.search().username);
+            }; //DEBUG
     */
 
-$http({
-            method: 'GET'
-            , url: '/auth/loggedin'
-        }).then(function successCallback(response) {
-            if (response.data.user !== '0') {
-                // Authenticated
-
-                console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
-                console.log('loggedin response = ' + JSON.stringify(response)); //debug
-
-                $rootScope.authenticated = true;
-                $rootScope.current_user = response.data;
-                $scope.username = response.data;
 
 
-            } else {
-                // Not Authenticated
+    $http({
+        method: 'GET'
+        , url: '/auth/loggedin'
+    }).then(function successCallback(response) {
+        if (response.data !== '0') {
+            // Authenticated
 
-                console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
+            console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
+            console.log('loggedin response = ' + JSON.stringify(response)); //debug
 
-                $rootScope.authenticated = false;
-                $rootScope.current_user = 'Guest';
+            $rootScope.authenticated = true;
+            $rootScope.current_user = response.data;
+            $scope.username = response.data;
 
-            }
-        }, function errorCallback(response) {
-            // error
-        });
+
+        } else {
+            // Not Authenticated
+
+            console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
+
+            $rootScope.authenticated = false;
+            $rootScope.current_user = 'Guest';
+
+            if ($location.search().username !== '') {
+                $rootScope.current_user = $routeParams.username;
+                console.log('location.search = ' + $location.search().username + '\n');
+                console.log('$window.location.search = ' + $window.location.search);
+            }; //DEBUG
+
+        }
+    }, function errorCallback(response) {
+        // error
+    });
 
     $scope.getUser = function getUser() {
+
+
 
         $http({
             method: 'GET'
@@ -138,9 +150,9 @@ $http({
             $scope.usrHome = response.data[0].usrHome;
             $scope.usrAccessToken = response.data[0].usrAccessToken;
             $scope.usrRefreshToken = response.data[0].usrRefreshToken;
-            
-            console.log('response.data[0].timeFrom = '+response.data[0].timeFrom); // debug
-            
+
+            console.log('response.data[0].timeFrom = ' + response.data[0].timeFrom); // debug
+
             $scope.timeFrom = response.data[0].timeFrom;
             $scope.timeTo = response.data[0].timeTo;
             $scope.tzOffset1 = response.data[0].tzOffset1;

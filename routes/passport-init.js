@@ -196,7 +196,7 @@ module.exports = function (passport) {
                         if (err) { throw err }
                     });
 
-                    return cb(null, user);
+                    return cb(null, upUser);
 
                 } else {
                     var newUser = new People();

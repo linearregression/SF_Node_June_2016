@@ -24,7 +24,7 @@
     "acl": "^0.4.9",
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.1",
-    "cookie-parser": "^1.4.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "helmet": "^2.1.1",

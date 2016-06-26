@@ -15,7 +15,7 @@ var moment = require('moment-timezone'); // Moment
 // passport
 var isAuthenticated = function (req, res, next) { 
 
-  console.log('req.isAuthenticated() = ' + req.isAuthenticated()); // DEBUG
+  console.log('api req.isAuthenticated() = ' + req.isAuthenticated()); // DEBUG
   
   if (req.isAuthenticated()) {
     return next();
@@ -26,7 +26,7 @@ var isAuthenticated = function (req, res, next) {
 router.use('/getUser', isAuthenticated); // passport
 router.use('/updateUser/:id', isAuthenticated); // passport
 
-//router.use('/getUser', acl.middleware());
+//router.use('/getUser', acl.middleware()); // node_acl
 
 var Acl = require('acl'); // node_acl
 
