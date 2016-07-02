@@ -1,5 +1,9 @@
 var app =
-    angular.module('sna', ['ngRoute', 'ngResource']);
+    angular.module('sna', ['ngRoute', 'ngResource'])
+    .config(function($locationProvider){
+$locationProvider.html5Mode({enabled:true, requireBase:false})
+    })
+    ;
 
 app.factory('profile', function ($resource) {
     return $resource('/updateUser/:id', { 'id': '@username' }, { 'update': { method: 'PUT' } });
@@ -78,64 +82,72 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
 
 });
 
-app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $location, $routeParams, $window) {
-
-    /*
-    if ($location.search().username !== '') {
-                $rootScope.current_user = $location.search().username;
-                console.log('location.search = ' + $location.search().username);
-            }; //DEBUG
-    */
-
-
-
-    $http({
-        method: 'GET'
-        , url: '/auth/loggedin'
-    }).then(function successCallback(response) {
-        if (response.data !== '0') {
-            // Authenticated
-
-            console.log('DEV NOTE -> success /auth/loggedin'); // [DEBUG]
-            console.log('loggedin response = ' + JSON.stringify(response)); //debug
-
-            $rootScope.authenticated = true;
-            $rootScope.current_user = response.data;
-            $scope.username = response.data;
-
-
-        } else {
-            // Not Authenticated
-
-            console.log('DEV NOTE -> error /auth/loggedin'); // [DEBUG]
-
-            $rootScope.authenticated = false;
-            $rootScope.current_user = 'Guest';
-
-            if ($location.search().username !== '') {
-                $rootScope.current_user = $routeParams.username;
-                console.log('location.search = ' + $location.search().username + '\n');
-                console.log('$window.location.search = ' + $window.location.search);
-            }; //DEBUG
-
-        }
-    }, function errorCallback(response) {
-        // error
-    });
-
-    $scope.getUser = function getUser() {
-
-
+app.controller('profCtrl', function ($scope, $http, $rootScope, profile) {
 
         $http({
+            method: 'GET'
+            , url: '/auth/loggedin'
+        }).then(function successCallback(response) {
+            if (response.data !== '0') {
+                // Authenticated
+
+                console.log('Success /auth/loggedin'); // [DEBUG]
+                //console.log('loggedin response = ' + JSON.stringify(response)); // [DEBUG]
+
+                $rootScope.current_user = response.data;
+                $scope.username = response.data;
+
+                $http({
             method: 'GET'
             , url: '/api/getUser'
             , params: { 'username': $rootScope.current_user }
         }).then(function successCallback(response) {
 
-            console.log('response = ' + JSON.stringify(response)); //debug
+            //console.log('response = ' + JSON.stringify(response)); // [DEBUG]
 
-            $rootScope.authenticated = true;
+            $scope.username = response.data[0].username;
+            $scope.password = response.data[0].password;
+            $scope.usrFirst = response.data[0].usrFirst;
+            $scope.usrLast = response.data[0].usrLast;
+            $scope.usrEmail = response.data[0].usrEmail;
+            $scope.timeFrom = response.data[0].timeFrom;
+            $scope.timeTo = response.data[0].timeTo;
+            $scope.tzOffset1 = response.data[0].tzOffset1;
+            $scope.tzOffset2 = response.data[0].tzOffset2;
+            $scope.tzOffset3 = response.data[0].tzOffset3;
+
+        }, function errorCallback(response) {
+            //error
+        });
+
+            } else {
+                // Not Authenticated
+
+                console.log('Error /auth/loggedin'); // [DEBUG]
+
+            }
+        }, function errorCallback(response) {
+            // error
+        });
+
+    $scope.updateUser = function updateUser(email, occupation, skills) {
+        profile.update({ 'id': $rootScope.current_user }, { 'usrEmail': email, 'usrOccupation': occupation, 'usrSkills': skills })
+    };
+});
+
+
+app.controller('gProfCtrl', function ($scope, $http ,$rootScope, $location, profile) {
+
+    //console.log ('$location.search(\'username\') = ' + JSON.stringify($location.search().username) ); //  [DEBUG]
+
+    $http({
+            method: 'GET'
+            , url: '/api/getUserGoogle'
+            , params: { 'username': $location.search().username }
+        }).then(function successCallback(response) {
+
+            console.log('response = ' + JSON.stringify(response)); // [DEBUG]
+
             $scope.username = response.data[0].username;
             $scope.password = response.data[0].password;
             $scope.googleId = response.data[0].googleId;
@@ -150,9 +162,6 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $locati
             $scope.usrHome = response.data[0].usrHome;
             $scope.usrAccessToken = response.data[0].usrAccessToken;
             $scope.usrRefreshToken = response.data[0].usrRefreshToken;
-
-            console.log('response.data[0].timeFrom = ' + response.data[0].timeFrom); // debug
-
             $scope.timeFrom = response.data[0].timeFrom;
             $scope.timeTo = response.data[0].timeTo;
             $scope.tzOffset1 = response.data[0].tzOffset1;
@@ -162,7 +171,6 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile, $locati
         }, function errorCallback(response) {
             //error
         });
-    };
 
     $scope.updateUser = function updateUser(email, occupation, skills) {
         profile.update({ 'id': $rootScope.current_user }, { 'usrEmail': email, 'usrOccupation': occupation, 'usrSkills': skills })

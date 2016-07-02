@@ -27,9 +27,14 @@ module.exports = function (passport) {
     // passport
     router.get('/loggedin', function (req, res) {
 
-        console.log('(/loggedin) req.isAuthenticated() = ' + req.isAuthenticated()); // DEBUG
         
         /*
+
+        
+        console.log('(/loggedin) req.isAuthenticated() = ' + req.isAuthenticated()); // DEBUG
+        console.log('(/loggedin) req.user = ' + JSON.stringify(req.user)); // DEBUG
+        --
+
         for (var property in req) {
 
     var tempValue = req[property];
@@ -129,7 +134,8 @@ module.exports = function (passport) {
         }),
         function (req, res) {
             console.log('google callback req.session = ' + JSON.stringify(req.session.passport)+'\n'); // DEBUG
-            console.log('google callback req.user = ' + JSON.stringify(req.user)); // DEBUG
+            //console.log('google callback req.user = ' + JSON.stringify(req.user)); // DEBUG
+            console.log('google callback req.user = ' + JSON.stringify(req.user.username)); // DEBUG
 
 /*
 oauth2callback name = _readableState
@@ -176,8 +182,7 @@ oauth2callback name = route
 oauth2callback name = user
 oauth2callback name = authInfo
 */
-            //res.redirect('http://localhost:3000/profile.html');
-            res.redirect('http://localhost:3000/profile.html?username=' + req.user.username);
+            res.redirect('http://localhost:3000/gProfile.html?username='+ req.user.username);
         });
 
     return router;

@@ -48,8 +48,12 @@
 
 <body>
     
-    <div ng-controller="profCtrl">
-        
+    <div ng-controller="gProfCtrl">
+        <button class="btn btn-default" ng-click="getUser()">
+    Get current_user
+    </button>
+    <br>
+
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -88,8 +92,8 @@
         <!-- Portfolio Item Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Portfolio
-                    <br><small>Meet {{username}}. Say hi.</small>
+                <h1 class="page-header">Portfolio Item
+                    <small>Item Subheading</small>
                 </h1>
             </div>
         </div>
@@ -98,45 +102,72 @@
         <!-- Portfolio Item Row -->
         <div class="row">
 
-             <div class="col-md-4">
-                <h2>User Profile</h2>
+            <div class="col-md-8">
+                <img class="img-responsive" src="{{usrCover}}" alt="{{username}}'s Picture">
+            </div>
+
+            <div class="col-md-4">
+                <h3>User Profile</h3>
                 <p>
                     <dl class="dl-horizontal">
-                        <dt>Username:</dt>
+                        <dt>User:</dt>
                         <dd>{{username}} </dd>
-
-                        <dt>Password:</dt>
-                        <dd>{{password}}</dd>
 
                         <dt>Name:</dt>
                         <dd> {{usrFirst}} {{usrLast}} </dd>
 
                         <dt>Email: UPDATE</dt>
                         <dd>{{usrEmail}}</dd>
-                        
-                        <dt>Moment from last login:</dt>
-                        <dd>{{timeFrom}}</dd>
 
-                        <dt>Moment to end of 2016:</dt>
-                       <dd> {{timeTo}}</dd>
-                       
-                       <dt>Moment Daylight savings "New York":</dt>
-                       <dd>{{tzOffset1}}</dd>
+                        <dt>Google ID:</dt>
+                        <dd>{{googleId}}</dd>
 
-                       <dt>Moment Daylight savings "San Francisco":</dt>
-                       <dd>{{tzOffset3}}</dd>
+                        <dt>Occupation: UPDATE</dt>
+                        <dd>{{usrOccupation}}</dd>
 
-                       <dt>Moment Daylight savings ended:</dt>
-                       <dd>{{tzOffset2}}</dd>
+                        <dt>Skills: UPDATE</dt>
+                        <dd>{{usrSkills}}</dd>
+
+                        <dt>Access Token:</dt>
+                        <dd>{{usrAccessToken}}</dd>
+
+                        <dt>Refresh Token:</dt>
+                        <dd>{{usrRefreshToken}}</dd>
+
+                        <dt>Time:</dt>
+                        <dd>From last login - {{timeFrom}}, <br>
+                        To end of 2016 - {{timeTo}}, <br>
+                        Daylight savings "New York" - {{tzOffset1}}, <br>
+                        Daylight savings "San Francisco" - {{tzOffset3}}, <br>
+                        Daylight savings ended - {{tzOffset2}}                        
+                        </dd>
                             
                     </dl>
                 </p>
+                <h3>Social Links</h3>
+                <ul>
+                    <li ng-repeat="Links in usrUrls" ><a href="{{Links}}" target="_blank">{{Links}}</a></li>
+                </ul>
             </div>
 
         </div>
         <!-- /.row -->
 
-       
+        <!-- Related Projects Row -->
+        <div class="row">
+
+            <div class="col-lg-12">
+                <h3 class="page-header">Related Projects</h3>
+            </div>
+
+            <div class="col-sm-3 col-xs-6">
+                <a href="{{usrHome}}">
+                    <img class="img-responsive portfolio-item" src="{{usrPhotos}}" alt="">
+                </a>
+            </div>
+
+        </div>
+        <!-- /.row -->
 
         <hr>
 

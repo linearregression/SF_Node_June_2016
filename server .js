@@ -5,7 +5,7 @@ var app_express = express(); // express
 var helmet = require('helmet'); // helmet
 app_express.use(helmet());  // helmet
 
-app_express.use(express.static(__dirname + '/public')); //express
+app_express.use(express.static(__dirname + '/public')); // express
 
 var passport = require('passport'); // passport
 var authenticate = require('./routes/authenticate')(passport); // passport
@@ -42,9 +42,9 @@ app_express.use(session({
     , name: 'sessionSfNodeId' // set session ID, more secure option
     , cookie: { 
         maxAge: 60000
-        , secure: true // https required
-        , httpOnly: true // send cookie over http(s), not client javascript
-        //domain: // domain of the cookie
+        //, secure: true // https required
+        //, httpOnly: true // send cookie over http(s), not client javascript
+        //, domain: // domain of the cookie
         //, path: // relative path of the cookie
         //, expires: // set expiration date, not necessary due to maxAge
     }
@@ -112,6 +112,7 @@ var options = {
 
 https.createServer(options, app_express).listen(443); // passport
 
+// express
 var server = app_express.listen({
     host: 'localhost',
     port: 3000
@@ -121,4 +122,4 @@ var server = app_express.listen({
     var vIp = server.address().family;
 
     console.log('Server listening on ' + vPort + ", as " + vIp + ", IP Address " + vHost);
-}); // express
+}); 

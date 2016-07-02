@@ -93,7 +93,7 @@ router.route('/getUser')
         //newUser[0].tzOffset3 = moment.tz("2016-12-18T20:00:00", "America/Los_Angeles"); // Moment
         newUser[0].tzOffset3 = moment().tz("America/Los_Angeles").format('MMMM d, YYYY H:mm A Z'); // Moment
 
-        newUser[0].tzOffset2 = moment.tz('2016-07-07 20:00:00',"America/Toronto").format('MMMM d, YYYY H:mm A Z'); // Moment
+        newUser[0].tzOffset2 = moment().tz("America/Toronto").format('MMMM d, YYYY H:mm A Z'); // Moment
 
 /*
         console.log('newUser = ' + JSON.stringify(newUser)+"\n"); // debug
@@ -105,6 +105,52 @@ router.route('/getUser')
 
         console.log('newUser = ' + JSON.stringify(newUser)+"\n"); // debug
 */
+
+        return res.send(newUser);
+      });
+    });
+
+
+  });
+
+router.route('/getUserGoogle')
+  .get(function (req, res) {
+
+//Tre%27%20Grisby
+//req.query.username = "Tre' Grisby"; // debug
+
+    //userRoles( userId, function(err, roles) )
+    acl.userRoles(req.query.username, function (err, roles) {
+      console.log('roles = ' + roles);
+    });
+
+    //isAllowed( userId, resource, permissions, function(err, allowed) )
+    acl.isAllowed(req.query.username, req.query.username, 'edit', function (err, allowed) {
+
+      console.log('acl.isAllowed begins, allowed = ' + allowed); // debug
+
+      if (err) {
+        return res.send(500, err);
+      };
+
+      if (!allowed) {
+        return res.sendStatus(401);
+      };
+
+      People.find({ "username": req.query.username }, function (err, mongoUser) {
+
+        var newUser = JSON.parse(JSON.stringify(mongoUser));
+
+        newUser[0].timeFrom = moment().from(mongoUser.usrLastLogin); // Moment
+        newUser[0].timeTo = moment().to('2016-12-31'); // Moment
+
+        //newUser[0].tzOffset1 = moment().tz("2016-12-18T20:00:00", "America/New_York"); // Moment
+        newUser[0].tzOffset1 = moment().tz("America/New_York").format('MMMM d, YYYY H:mm A Z'); // Moment
+
+        //newUser[0].tzOffset3 = moment.tz("2016-12-18T20:00:00", "America/Los_Angeles"); // Moment
+        newUser[0].tzOffset3 = moment().tz("America/Los_Angeles").format('MMMM d, YYYY H:mm A Z'); // Moment
+
+        newUser[0].tzOffset2 = moment().tz("America/Toronto").format('MMMM d, YYYY H:mm A Z'); // Moment
 
         return res.send(newUser);
       });
