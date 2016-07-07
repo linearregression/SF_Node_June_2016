@@ -199,7 +199,6 @@ module.exports = function (passport) {
 
                     newUser.save(function (err) {
                         if (err) {
-                            console.log('Error saving user: ' + err);
                             throw err;
                         };
 

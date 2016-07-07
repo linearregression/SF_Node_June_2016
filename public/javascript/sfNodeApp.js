@@ -22,8 +22,6 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
                 'usrLast': $scope.usrLast
             }
         }).then(function successCallback(response) {
-            console.log('register response = ' + response);//DEBUG
-
             $rootScope.current_user = response.data.username;
             $window.location.href = 'http://localhost:3000/profile.html';
 
@@ -40,35 +38,9 @@ app.controller('loginCtrl', function ($scope, $http, $window, $rootScope) {
             { 'username': $scope.username, 'password': $scope.password }
         ).then(
             function successCallback(response) {
-                console.log('login response = ' + JSON.stringify(response));//DEBUG
 
                 $rootScope.current_user = response.data.username;
-                //$rootScope._id = response.data._id;
                 $window.location.href = 'http://localhost:3000/profile.html';
-
-                /* [NOTE] - this is http header data before helmet was installed. It shows the password as plain text. I wonder what this looks like after helmet is installed.
-                login response = {
-                    "data":{
-                        "_id":"574ce8ace7d9e86c0a2844a7",
-                        "usrSocial":"local",
-                        "usrLast":"Grisby III",
-                        "usrFirst":"tre",
-                        "usrEmail":"trewaters@hotmail.com",
-                        "password":"$2a$10$Mg5TfKxZ6usZ50tb5MTU7OngjSqxBKRzxshLthbrOkBW9Q7Rru9Ze",
-                        "username":"tre",
-                        "__v":0
-                    },
-                    "status":200,
-                    "config":{
-                        "method":"POST",
-                    "transformRequest":[null],
-                    "transformResponse":[null],
-                    "url":"/auth/login",
-                    "data":{"username":"tre","password":"tre"},
-                    "headers":{"Accept":"application/json, text/plain, *\/*","Content-Type":"application/json;charset=utf-8"}
-                },
-                "statusText":"OK"}
-                */
 
                 // this callback will be called asynchronously
                 // when the response is available
@@ -91,9 +63,6 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile) {
             if (response.data !== '0') {
                 // Authenticated
 
-                console.log('Success /auth/loggedin'); // [DEBUG]
-                //console.log('loggedin response = ' + JSON.stringify(response)); // [DEBUG]
-
                 $rootScope.current_user = response.data;
                 $scope.username = response.data;
 
@@ -102,8 +71,6 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile) {
             , url: '/api/getUser'
             , params: { 'username': $rootScope.current_user }
         }).then(function successCallback(response) {
-
-            //console.log('response = ' + JSON.stringify(response)); // [DEBUG]
 
             $scope.username = response.data[0].username;
             $scope.password = response.data[0].password;
@@ -119,12 +86,8 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile) {
         }, function errorCallback(response) {
             //error
         });
-
             } else {
                 // Not Authenticated
-
-                console.log('Error /auth/loggedin'); // [DEBUG]
-
             }
         }, function errorCallback(response) {
             // error
@@ -138,15 +101,11 @@ app.controller('profCtrl', function ($scope, $http, $rootScope, profile) {
 
 app.controller('gProfCtrl', function ($scope, $http ,$rootScope, $location, profile) {
 
-    //console.log ('$location.search(\'username\') = ' + JSON.stringify($location.search().username) ); //  [DEBUG]
-
     $http({
             method: 'GET'
             , url: '/api/getUserGoogle'
             , params: { 'username': $location.search().username }
         }).then(function successCallback(response) {
-
-            console.log('response = ' + JSON.stringify(response)); // [DEBUG]
 
             $scope.username = response.data[0].username;
             $scope.password = response.data[0].password;
