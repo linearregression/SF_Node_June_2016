@@ -1,4 +1,4 @@
-# SF_Node_June_2016
+# SF_Node_Talk
 Example web app using MeAN Stack to showcase some NPM Modules. These are modules that I like and think you should try.
 
 # What
