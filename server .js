@@ -69,39 +69,6 @@ app_express.use('/api', api); // passport
 //[NOTE] show this response with Morgan logger, then REMOVE
 //app_express.get('/', function (req, res) {res.sendStatus(222)}); // express
 
-/*
-https notes:
-( https://nodejs.org/api/tls.html )
-( https://engineering.circle.com/https-authorized-certs-with-node-js-315e548354a2#.f0w1qh5wo )
-( https://blogs.msdn.microsoft.com/robert_mcmurray/2013/11/15/how-to-trust-the-iis-express-self-signed-certificate/ ) windows solution for cert export
-( https://code.google.com/archive/p/openssl-for-windows/downloads ) download openssl from google
-( http://www.c-sharpcorner.com/UploadFile/82b980/creating-https-server-with-nodejs/ ) this worked!!!
-- ( C:\Users\Tre'\openssl-0.9.8k_X64\bin ) my location to generate keys
-*/
-
-/*
-var Acl = require('acl'); // node_acl
-
-var acl = new Acl(new Acl.mongodbBackend(mongoose.connection.db, 'acl_', true)); // node_acl
-
-//node_acl
-//Adds the given permissions to the given roles over the given resources.
-acl.allow([
-    {
-        roles: ['guest', 'guest']
-        , allows: [
-            { resources: 'profile', permissions: 'get' }
-            , { resources: 'updateUser', permissions: 'get' }
-        ]
-    }
-], function (err) {
-    if (err) { console.log('save error, ' + err); }
-
-    console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
-
-});
-*/
-
 var https = require('https');
 var fs = require('fs');
 

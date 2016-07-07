@@ -35,8 +35,7 @@
     "node-gyp": "^3.3.1",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
-    "passport-local": "^1.0.0",
-    "xml2js": "^0.4.16"
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "lite-server": "^2.2.0"

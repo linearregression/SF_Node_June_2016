@@ -25,8 +25,6 @@ module.exports = function (passport) {
     // Passport needs to be able to serialize and deserialize users to support persistent login sessions
     passport.serializeUser(function (user, done) { // passport
 
-        console.log('serializing user:', user.username); // DEBUG
-
         //return the unique id for the user
         done(null, user._id);
     });
@@ -35,8 +33,6 @@ module.exports = function (passport) {
     passport.deserializeUser(function (_id, done) { // passport
 
         People.findById(_id, function (err, user) {
-
-            console.log('deserializing user: ', user.username); // DEBUG
 
             done(err, user);
         });
@@ -72,11 +68,9 @@ module.exports = function (passport) {
             People.findOne({ 'username': username }, function (err, user) {
 
                 if (err) {
-                    //console.log('Error in sign up: ' + err); // [DEBUG]
                     return done(err);
                 }
                 if (user) {
-                    //console.log('User already exist with username: ' + username); // [DEBUG]
 
                     var upUser = new People();
 
@@ -86,7 +80,6 @@ module.exports = function (passport) {
                         if (err) {
                             throw err;
                         };
-                        console.log('local usrLastLogin updated' + '\n'); // [DEBUG]
                     });
 
                     return done(null, false);
@@ -108,7 +101,6 @@ module.exports = function (passport) {
 
                     newUser.save(function (err) {
                         if (err) {
-                            console.log('Error saving user: ' + err); // DEBUG
                             throw err;
                         };
 
@@ -131,31 +123,15 @@ module.exports = function (passport) {
                         ], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
-                            console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
-
                         });
-                        /*
-                        //node_acl
-                        //Adds the given permissions to the given roles over the given resources.
-                        // [NOTES] allow( roles, resources, permissions, function(err) )
-                        acl.allow(newUser.username, newUser.username, 'edit', function (err) {
-                                                    if (err) { console.log('save error, ' + err); }
-                        
-                                                    console.log('acl local \'profile\' allow edit created' + '\n'); // DEBUG
-                        
-                         });
-                        */
-
+                    
                         //node_acl
                         //Adds roles to a given user id.
                         // [NOTES] addUserRoles( userId, roles, function(err) )
                         acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
-                            console.log('acl local \'profile\' addUser Roles' + '\n'); // DEBUG
-
                         });
-                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
                     });
                     return done(null, newUser);
                 };
@@ -246,10 +222,6 @@ module.exports = function (passport) {
                         ], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
-                            console.log('acl roles, permissions, and resources created in server.js' + '\n'); // DEBUG
-
-                            console.log('before google return' + '\n'); // [DEBUG]
-
                         });
 
                         //node_acl
@@ -258,15 +230,9 @@ module.exports = function (passport) {
                         acl.addUserRoles(newUser.username, ['guest', newUser.username], function (err) {
                             if (err) { console.log('save error, ' + err); }
 
-                            console.log('acl google addUserRoles created' + '\n'); // DEBUG
-
                         });
 
-                        console.log(newUser.username + ' Registration successful' + '\n'); // [DEBUG]
- 
                 });
-
-                    console.log('after google oauth2callback return' + '\n'); // [DEBUG]
                     
                     return cb(null, newUser);
                 };
